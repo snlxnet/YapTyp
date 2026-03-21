@@ -2,10 +2,12 @@
 <script>
 const slides = document.querySelectorAll(".slides .typst-doc")
 const notes = document.querySelectorAll(".notes .typst-doc")
-let pool = window.location.search.endsWith("notes") ? notes : slides
+const notesMode = window.location.search.endsWith("notes")
+let pool = notesMode ? notes : slides
+
 const channel = new BroadcastChannel("control")
 channel.addEventListener("message", ({data: idx}) => {
-    if (pool === notes) {
+    if (notesMode) {
         idx++
     }
     showSlide(idx, true)
@@ -14,6 +16,9 @@ channel.addEventListener("message", ({data: idx}) => {
 let currentSlide = pool === notes ? 1 : 0
 showSlide(currentSlide)
 createVideos()
+if (notesMode) {
+    createTimer()
+}
 
 document.addEventListener("keydown", (event) => {
     const actions = {
@@ -63,7 +68,7 @@ function showSlide(idx, quiet = false) {
         }
     })
     if (!quiet) {
-        if (pool === notes) {
+        if (notesMode) {
             idx--
         }
         channel.postMessage(idx)
@@ -103,6 +108,28 @@ function handlePlayback(video) {
 
     video.currentTime = 0
     video.play()
+}
+
+function createTimer() {
+    const started = new Date()
+
+    const timer = document.createElement("span")
+    timer.classList.add("timer")
+
+    setInterval(() => {
+        const seconds = (new Date() - started) / 1000
+        timer.textContent = prettifyNumber(seconds / 60) + ":" + prettifyNumber(seconds % 60)
+    }, 1000)
+
+    document.body.appendChild(timer)
+}
+
+function prettifyNumber(x) {
+    if (x > 100) {
+        return x
+    }
+
+    return ('00' + Math.floor(x)).slice(-2)
 }
 </script>
 </body>
