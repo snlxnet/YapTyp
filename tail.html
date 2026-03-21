@@ -53,9 +53,14 @@ function createVideos() {
         .filter(element => element.dataset.typstLabel)
         .map(anchor => {
             const video = document.createElement("video")
+            video.src = "./" + anchor.dataset.typstLabel
+            video.loop = true
             updateGeometry(video, anchor)
-            document.addEventListener("slideswitched", () => updateGeometry(video, anchor))
             document.body.appendChild(video)
+            document.addEventListener("slideswitched", () => {
+                updateGeometry(video, anchor)
+                handlePlayback(video)
+            })
         })
 }
 
@@ -65,6 +70,16 @@ function updateGeometry(video, anchor) {
     video.style.top = y + 'px'
     video.style.width = width + 'px'
     video.style.height = height + 'px'
+}
+
+function handlePlayback(video) {
+    if (video.style.width === 0 || video.style.height === 0) {
+        video.pause()
+        return
+    }
+
+    video.currentTime = 0
+    video.play()
 }
 </script>
 </body>
