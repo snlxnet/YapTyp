@@ -20,6 +20,14 @@ if (notesMode) {
     createTimer()
 }
 
+document.addEventListener("click", (event) => {
+    const x = event.clientX / window.innerWidth
+    if (x > 0.5) {
+        nextSlide()
+    } else {
+        prevSlide()
+    }
+})
 document.addEventListener("keydown", (event) => {
     const actions = {
         ArrowRight: nextSlide,
