@@ -2,6 +2,7 @@
 #let notes(body) = []
 #let slide(body) = page(
   paper: "presentation-16-9",
-  body,
+  box(body),
 )
 
+#let styling(doc) = doc
