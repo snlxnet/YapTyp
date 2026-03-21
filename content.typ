@@ -1,6 +1,8 @@
+#set align(horizon)
 #slide[
-  = Hello, world
-  Example presentation built with YapTyp
+  #set align(horizon)
+  = YapTyp
+  Press `n` to open speaker notes
 ]
 #notes[
   (insert introduction)

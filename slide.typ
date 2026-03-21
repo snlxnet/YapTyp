@@ -5,4 +5,7 @@
   box(body),
 )
 
-#let styling(doc) = doc
+#let styling(doc) = {
+  set text(size: 24pt)
+  doc
+}

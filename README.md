@@ -23,6 +23,10 @@ If you have Nix, you can run `nix-shell`.
 
 ## Usage notes
 
+Everything must be contained in `#slide` or `#notes` blocks, no top-level content.
+Other that, the project is rather unopinionated, you can style / change it however you see fit.
+
+
 - `#slide` is a page that shows in the main view,
 - `#notes` is a page that shows in the presenter view,
 - if the notes are longer than an A6 page, they will overflow and currently break the presenter's view
@@ -32,5 +36,5 @@ If you have Nix, you can run `nix-shell`.
 ## Credits
 
 - The [typst](https://typst.app) compiler is the heart of this project
-- [Cattpuccin](https://github.com/catppuccin/typst) is the theme used for speaker notes by default
+- [Catppuccin](https://github.com/catppuccin/typst) is the theme used for speaker notes by default
 - `demo.webm` is from WikiMedia Commons, [source](https://commons.wikimedia.org/wiki/File:Butterfly_catastrophe_animation.webm)
