@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: install dependencies
-        run: snap install typst
+        run: sudo snap install typst
       - name: check out repo code
         uses: actions/checkout@v5
       - name: setup pages
