@@ -36,8 +36,9 @@ document.addEventListener("keydown", (event) => {
         ArrowUp: prevSlide,
         Home: firstSlide,
         End: lastSlide,
-        p: openNotes,
-        n: openNotes,
+        p: openNotes, // presenter view
+        n: openNotes, // note view
+        s: openNotes, // speaker notes
     }
 
     actions[event.key]()
