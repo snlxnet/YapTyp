@@ -1,5 +1,7 @@
 # YapTyp
 
+[![preview](./preview-banner.svg)](https://snlxnet.github.io/yaptyp)
+
 This is Yet Another Presentation builder for Typst, the key differences from the rest are:
 - it generates HTML, not PDF
 - it allows inserting videos into the presentation
@@ -8,6 +10,11 @@ This is Yet Another Presentation builder for Typst, the key differences from the
 Things worth keeping in mind:
 - but does not support animations (yet)
 - if the notes are longer than an A6 page, they will overflow and currently break the presenter's view
+
+## Project Status
+This was built in one day, I do intend to keep working on it,
+though it does pretty much everything I want it to do for now.
+If you have any suggestions, please open an issue or write me an email.
 
 ## Requirements
 
