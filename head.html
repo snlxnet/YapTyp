@@ -10,6 +10,25 @@
       margin: 0;
       padding: 0;
     }
+    .hidden {
+      display: none;
+    }
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .typst-doc {
+      width: 100%;
+      height: unset;
+    }
+    @media (min-aspect-ratio: 16/9) {
+      .typst-doc {
+        width: unset;
+        height: 100%;
+      }
+    }
     video {
       position: fixed;
     }
