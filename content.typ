@@ -1,4 +1,5 @@
-#import "./slide.typ": *
+#import "./notes.typ": *
+#show: styling
 
 #slide[
   = Hello, world
@@ -20,6 +21,7 @@
   - allows inserting videos into the presentation
   - allows opening a window with speaker notes (like impressjs)
   - but does not support animations (yet)
+  - if the notes are longer than an A6 page, they will overflow and currently break the presenter's view
 ]
 
 #slide[
@@ -28,4 +30,8 @@
   #player(height: 90%, fill: eastern)<demo.webm>
 
   Note that the player will try to take up 100% of the available space
+]
+
+#slide[
+  The End.
 ]

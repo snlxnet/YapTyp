@@ -1,5 +1,9 @@
+</div>
 <script>
-const slides = document.querySelectorAll(".typst-doc")
+const slides = document.querySelectorAll(".slides .typst-doc")
+const notes = document.querySelectorAll(".notes .typst-doc")
+let pool = window.location.search.endsWith("notes") ? notes : slides
+
 let currentSlide = 0
 showSlide(0)
 createVideos()
@@ -18,10 +22,10 @@ document.addEventListener("keydown", (event) => {
 })
 
 function firstSlide() { showSlide(0) }
-function lastSlide() { showSlide(slides.length - 1) }
+function lastSlide() { showSlide(pool.length - 1) }
 
 function nextSlide() {
-    if (currentSlide + 1 === slides.length) {
+    if (currentSlide + 1 === pool.length) {
         firstSlide()
     } else {
         showSlide(currentSlide + 1)
@@ -38,11 +42,11 @@ function prevSlide() {
 
 function showSlide(idx) {
     currentSlide = idx
-    slides.forEach((slide, currentIdx) => {
+    pool.forEach((slide, currentIdx) => {
         if (currentIdx !== idx) {
-            slide.classList.add("hidden")
+            slide.classList.remove("visible")
         } else {
-            slide.classList.remove("hidden")
+            slide.classList.add("visible")
         }
     })
     document.dispatchEvent(new Event("slideswitched"))

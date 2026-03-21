@@ -1,5 +1,22 @@
-#let player(url) = []
+#let player(..args) = []
 #let notes(body) = body
-#let slide(body) = []
+#let slide(body) = pagebreak()
 
-#include "./content.typ"
+#let styling(doc) = {
+  import "@preview/catppuccin:1.1.0": catppuccin, flavors
+  show: catppuccin.with(flavors.mocha)
+
+  set page(paper: "a6", flipped: true, numbering: "1 / 1", margin: 10mm)
+  set text(size: 3.5mm, font: "DejaVu Sans Mono")
+
+  align(
+    horizon + center,
+    text(
+      size: 10mm,
+      fill: flavors.mocha.colors.sapphire.rgb,
+      weight: "bold",
+      "Presenter's Notes",
+    )
+  )
+  doc
+}

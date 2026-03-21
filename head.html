@@ -10,9 +10,6 @@
       margin: 0;
       padding: 0;
     }
-    .hidden {
-      display: none;
-    }
     body {
       display: flex;
       align-items: center;
@@ -20,13 +17,17 @@
       height: 100vh;
     }
     .typst-doc {
-      width: 100%;
+      width: 100vw;
       height: unset;
+      display: none;
+    }
+    .typst-doc.visible {
+      display: block;
     }
     @media (min-aspect-ratio: 16/9) {
       .typst-doc {
         width: unset;
-        height: 100%;
+        height: 100dvh;
       }
     }
     video {
@@ -35,3 +36,4 @@
   </style>
 </head>
 <body>
+  <div class="slides">
