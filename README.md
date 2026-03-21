@@ -1,6 +1,6 @@
 # YapTyp
 
-[![preview](./preview-banner.svg)](https://snlxnet.github.io/yaptyp)
+[![preview](./preview-banner.svg)](https://snlxnet.github.io/YapTyp/)
 
 This is Yet Another Presentation builder for Typst, the key differences from the rest are:
 - it generates HTML, not PDF
