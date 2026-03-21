@@ -24,7 +24,7 @@
 #slide[
   == Video Demo
 
-  #player(height: 90%, fill: eastern)<demo.webm>
+  #player()<demo.webm>
 
   Note that the player will try to take up 100% of the available space
 ]
