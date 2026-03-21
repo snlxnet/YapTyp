@@ -3,9 +3,16 @@
 const slides = document.querySelectorAll(".slides .typst-doc")
 const notes = document.querySelectorAll(".notes .typst-doc")
 let pool = window.location.search.endsWith("notes") ? notes : slides
+const channel = new BroadcastChannel("control")
+channel.addEventListener("message", ({data: idx}) => {
+    if (pool === notes) {
+        idx++
+    }
+    showSlide(idx, true)
+})
 
-let currentSlide = 0
-showSlide(0)
+let currentSlide = pool === notes ? 1 : 0
+showSlide(currentSlide)
 createVideos()
 
 document.addEventListener("keydown", (event) => {
@@ -16,10 +23,16 @@ document.addEventListener("keydown", (event) => {
         ArrowUp: prevSlide,
         Home: firstSlide,
         End: lastSlide,
+        p: openNotes,
+        n: openNotes,
     }
 
     actions[event.key]()
 })
+
+function openNotes() {
+    open(window.location + "?mode=notes", undefined, { popup: true })
+}
 
 function firstSlide() { showSlide(0) }
 function lastSlide() { showSlide(pool.length - 1) }
@@ -40,7 +53,7 @@ function prevSlide() {
     }
 }
 
-function showSlide(idx) {
+function showSlide(idx, quiet = false) {
     currentSlide = idx
     pool.forEach((slide, currentIdx) => {
         if (currentIdx !== idx) {
@@ -49,6 +62,12 @@ function showSlide(idx) {
             slide.classList.add("visible")
         }
     })
+    if (!quiet) {
+        if (pool === notes) {
+            idx--
+        }
+        channel.postMessage(idx)
+    }
     document.dispatchEvent(new Event("slideswitched"))
 }
 
