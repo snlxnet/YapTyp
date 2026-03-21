@@ -1,6 +1,3 @@
-#import "./notes.typ": *
-#show: styling
-
 #slide[
   = Hello, world
   Example presentation built with YapTyp
