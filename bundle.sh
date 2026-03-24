@@ -4,7 +4,7 @@ echo "
 #show: styling
 $(cat content.typ)
 " > main.typ
-typst compile main.typ note{p}.svg
+typst compile main.typ note{0p}.svg
 
 # slides
 echo "
@@ -12,7 +12,7 @@ echo "
 #show: styling
 $(cat content.typ)
 " > main.typ
-typst compile main.typ slide{p}.svg
+typst compile main.typ slide{0p}.svg
 
 # html
 cat head.html slide*.svg mid.html note*.svg tail.html > player.html
