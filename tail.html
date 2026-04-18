@@ -22,6 +22,12 @@ if (notesMode) {
 
 document.addEventListener("click", (event) => {
     const x = event.clientX / window.innerWidth
+    const y = event.clientY / window.innerHeight
+    if (y < 0.3) {
+        document.body.requestFullscreen()
+        firstSlide()
+        return
+    }
     if (x > 0.5) {
         nextSlide()
     } else {
