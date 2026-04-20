@@ -1,4 +1,4 @@
-#let player(..args) = []
+#let vid(..args) = []
 #let notes(body) = body
 #let slide(body) = pagebreak()
 

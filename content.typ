@@ -26,7 +26,7 @@
 #slide[
   == Video Demo
 
-  #player()<demo.webm>
+  #vid("demo.webm")
 
   Note that the player will try to take up 100% of the available space
 ]

@@ -37,8 +37,8 @@ Other that, the project is rather unopinionated, you can style / change it howev
 - `#slide` is a page that shows in the main view,
 - `#notes` is a page that shows in the presenter view,
 - if the notes are longer than an A6 page, they will overflow and currently break the presenter's view
-- to insert a video, use `#player()<filename>`, the file has to be in the project directory
-- `#player` is actually just a `#box` with some defaults, so it takes the same arguments
+- to insert a video, use `#vid("filename.mp4")`, the file has to be in the project directory
+- `#vid` is actually just a `#box` with some defaults, so it takes the same arguments
 
 ## Credits
 
