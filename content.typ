@@ -1,19 +1,22 @@
+#import "./slide.typ": notes, next, vid
+
+#set page(paper: "presentation-16-9")
+#set text(size: 24pt)
 #set align(horizon)
-#slide[
-  #set align(horizon)
-  = YapTyp
-  Press `n` to open speaker notes
-]
+
+= YapTyp
+Press `n` to open speaker notes
+
 #notes[
   (insert introduction)
 ]
+#next()
 
-#slide[
-  == What YapTyp is
-  - HTML Generation
-  - Speaker Notes
-  - Media
-]
+== What YapTyp is
+- HTML Generation
+- Speaker Notes
+- Media
+
 #notes[
   *YapTyp* is Yet Another Presentation tool for TYPst that
   - generates HTML, not PDF
@@ -22,15 +25,13 @@
   - but does not support animations (yet)
   - if the notes are longer than an A6 page, they will overflow and currently break the presenter's view
 ]
+#next()
 
-#slide[
+#box[
   == Video Demo
-
   #vid("demo.webm")
-
-  Note that the player will try to take up 100% of the available space
+  Note that the player will try to take up 100% of the available space by default
 ]
+#next()
 
-#slide[
-  The End.
-]
+The End.
