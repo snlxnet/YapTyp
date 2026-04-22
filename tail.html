@@ -88,8 +88,10 @@ function createVideos() {
         .filter(element => element.dataset.typstLabel)
         .map(anchor => {
             const video = document.createElement("video")
-            video.src = "./" + anchor.dataset.typstLabel
+            const src = anchor.dataset.typstLabel
+            video.src = src.startsWith("http") ? src : "./" + src
             video.loop = true
+            video.preload = "auto"
             updateGeometry(video, anchor)
             document.body.appendChild(video)
             document.addEventListener("slideswitched", () => {

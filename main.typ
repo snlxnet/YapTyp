@@ -41,8 +41,11 @@ Press `n` to open speaker notes
 
 #box[
   == Video Demo
-  #vid("demo.webm")
+  #vid("https://upload.wikimedia.org/wikipedia/commons/9/9d/Butterfly_catastrophe_animation.webm")
   Note that the player will try to take up 100% of the available space by default
+]
+#notes[
+  The file is from #link("https://commons.wikimedia.org/wiki/File:Butterfly_catastrophe_animation.webm")[wikimedia commons]
 ]
 #next()
 
