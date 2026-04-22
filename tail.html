@@ -6,14 +6,9 @@ const notesMode = window.location.search.endsWith("notes")
 let pool = notesMode ? notes : slides
 
 const channel = new BroadcastChannel("control")
-channel.addEventListener("message", ({data: idx}) => {
-    if (notesMode) {
-        idx++
-    }
-    showSlide(idx, true)
-})
+channel.addEventListener("message", ({data: idx}) => showSlide(idx, true))
 
-let currentSlide = pool === notes ? 1 : 0
+let currentSlide = 0
 showSlide(currentSlide)
 createVideos()
 if (notesMode) {
@@ -83,9 +78,6 @@ function showSlide(idx, quiet = false) {
         }
     })
     if (!quiet) {
-        if (notesMode) {
-            idx--
-        }
         channel.postMessage(idx)
     }
     document.dispatchEvent(new Event("slideswitched"))

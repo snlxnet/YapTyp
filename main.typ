@@ -23,7 +23,8 @@ Press `n` to open speaker notes
   - allows inserting videos into the presentation
   - allows opening a window with speaker notes (like impressjs)
   - but does not support animations (yet)
-  - if the notes are longer than an A6 page, they will overflow and currently break the presenter's view
+
+  Example *bold*, _italic_, and https://example.com link text
 ]
 #next()
 

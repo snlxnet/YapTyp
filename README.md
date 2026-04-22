@@ -9,7 +9,7 @@ This is Yet Another Presentation builder for Typst, the key differences from the
 
 Things worth keeping in mind:
 - but does not support animations (yet)
-- if the notes are longer than an A6 page, they will overflow and currently break the presenter's view
+- if the notes are too long, they will overflow and currently break the presenter's view
 
 ## Project Status
 This was built in one day, I do intend to keep working on it,
