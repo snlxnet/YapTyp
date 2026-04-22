@@ -10,6 +10,7 @@
   set page(paper: "presentation-16-9")
   set text(size: 24pt)
   set align(horizon)
+  show link: set text(fill: eastern)
   doc
 }
 #show: style
@@ -45,4 +46,7 @@ Press `n` to open speaker notes
 ]
 #next()
 
-The End.
+#if sys.inputs.mode != "article" [
+  This presentaiton is also available as an article,\
+  click #link("article.html")[here] to open
+]
