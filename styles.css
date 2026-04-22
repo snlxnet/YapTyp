@@ -1,0 +1,29 @@
+html {
+  margin: 1rem;
+  font-family: monospace;
+  font-size: 16px;
+  line-height: 1.6;
+  background: #1e1e2e;
+  color: #cdd6f4;
+}
+
+body {
+  margin: 0 auto;
+  max-width: 70ch;
+}
+
+h1, h2, h3 {
+  font-size: 1.6rem;
+}
+
+h1, h2, h3, em, strong {
+  color: #b4befe;
+}
+
+a {
+  color: #a6e3a1;
+}
+
+video {
+  width: 100%;
+}

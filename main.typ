@@ -1,8 +1,18 @@
 #import "./yap.typ": notes, next, vid
 
-#set page(paper: "presentation-16-9")
-#set text(size: 24pt)
-#set align(horizon)
+#let style(doc) = if sys.inputs.mode == "article" {
+  html.link(
+    rel: "stylesheet",
+    href: "styles.css",
+  )
+  doc
+} else {
+  set page(paper: "presentation-16-9")
+  set text(size: 24pt)
+  set align(horizon)
+  doc
+}
+#show: style
 
 = YapTyp
 Press `n` to open speaker notes

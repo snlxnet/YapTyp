@@ -19,10 +19,19 @@
       ],
     ),
   )
+} else if sys.inputs.mode == "article" {
+  block(body)
 }
 
-#let next() = pagebreak()
+#let next() = if sys.inputs.mode != "article" {
+  pagebreak()
+}
 
-#let vid(url, ..args) = [
+#let vid(url, ..args) = if sys.inputs.mode == "article" {
+  html.video(
+    controls: true,
+    src: url,
+  )
+} else [
   #box(width: 100%, height: 100%, fill: rgb("ffffff00"), ..args) #label(url)
 ]
