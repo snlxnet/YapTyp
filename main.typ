@@ -1,4 +1,4 @@
-#import "./slide.typ": notes, next, vid
+#import "./yap.typ": notes, next, vid
 
 #set page(paper: "presentation-16-9")
 #set text(size: 24pt)
