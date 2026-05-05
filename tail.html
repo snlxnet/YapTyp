@@ -15,6 +15,9 @@ if (notesMode) {
     notes.forEach(note => note.remove())
 }
 
+document.querySelectorAll("a").forEach(el => el.addEventListener("click", (event) => {
+    event.stopPropagation()
+}))
 document.addEventListener("click", (event) => {
     const x = event.clientX / window.innerWidth
     const y = event.clientY / window.innerHeight
