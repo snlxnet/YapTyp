@@ -1,7 +1,6 @@
-#let notes(body) = if sys.inputs.mode == "notes" {
-  place(
-    top + left,
-    box(
+#let notes(body) = context if target() != "html" {
+  place(top + left)[
+    #box(
       width: 100%,
       height: 100%,
       outset: 50%,
@@ -17,17 +16,17 @@
         #show link: set text(fill: rgb("a6e3a1"))
         #body
       ],
-    ),
-  )
-} else if sys.inputs.mode == "article" {
+    )<note>
+  ]
+} else {
   block(body)
 }
 
-#let next() = if sys.inputs.mode != "article" {
+#let next() = context if target() != "html" {
   pagebreak()
 }
 
-#let vid(url, ..args) = if sys.inputs.mode == "article" {
+#let vid(url, ..args) = context if target() == "html" {
   html.video(
     controls: true,
     src: url,

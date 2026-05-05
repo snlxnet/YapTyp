@@ -1,6 +1,6 @@
 #import "./yap.typ": notes, next, vid
 
-#let style(doc) = if sys.inputs.mode == "article" {
+#let style(doc) = context if target() == "html" {
   html.link(
     rel: "stylesheet",
     href: "styles.css",
@@ -49,7 +49,7 @@ Press `n` to open speaker notes
 ]
 #next()
 
-#if sys.inputs.mode != "article" [
+#context if target() != "html" [
   This presentaiton is also available as an article,\
   click #link("article.html")[here] to open
 ]

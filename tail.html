@@ -1,9 +1,7 @@
-</div>
 <script>
-const slides = document.querySelectorAll(".slides .typst-doc")
-const notes = document.querySelectorAll(".notes .typst-doc")
+const slides = document.querySelectorAll(".typst-doc")
+const notes = document.querySelectorAll('[data-typst-label="note"]')
 const notesMode = window.location.search.endsWith("notes")
-let pool = notesMode ? notes : slides
 
 const channel = new BroadcastChannel("control")
 channel.addEventListener("message", ({data: idx}) => showSlide(idx, true))
@@ -13,6 +11,8 @@ showSlide(currentSlide)
 createVideos()
 if (notesMode) {
     createTimer()
+} else {
+    notes.forEach(note => note.remove())
 }
 
 document.addEventListener("click", (event) => {
@@ -50,10 +50,10 @@ function openNotes() {
 }
 
 function firstSlide() { showSlide(0) }
-function lastSlide() { showSlide(pool.length - 1) }
+function lastSlide() { showSlide(slides.length - 1) }
 
 function nextSlide() {
-    if (currentSlide + 1 === pool.length) {
+    if (currentSlide + 1 === slides.length) {
         firstSlide()
     } else {
         showSlide(currentSlide + 1)
@@ -70,7 +70,7 @@ function prevSlide() {
 
 function showSlide(idx, quiet = false) {
     currentSlide = idx
-    pool.forEach((slide, currentIdx) => {
+    slides.forEach((slide, currentIdx) => {
         if (currentIdx !== idx) {
             slide.classList.remove("visible")
         } else {
