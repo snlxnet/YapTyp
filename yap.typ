@@ -1,3 +1,5 @@
+#let vidata = plugin("vidata.wasm") // https://github.com/snlxnet/vidata
+
 #let notes(body) = context if target() != "html" {
   place(top + left)[
     #box(
@@ -31,6 +33,29 @@
     controls: true,
     src: url,
   )
-} else [
-  #box(width: 100%, height: 100%, fill: rgb("ffffff00"), ..args) #label(url)
-]
+} else {
+  let width = none
+  let height = none
+  let props = args.named()
+
+  if url.ends-with(".mp4") {
+    let metadata = vidata.from(read(url, encoding: none))
+    let video = eval(str(metadata))
+
+    if "width" in props and "height" in props {
+      width = props.width
+      height = props.height
+    } else if "width" in props {
+      width = props.width
+      height = video.height / video.width * props.width
+    } else if "height" in props {
+      height = props.height
+      width = video.width / video.height * props.height
+    } else {
+      width = video.width
+      height = video.height
+    }
+  }
+
+  [#box(fill: rgb("12345600"), ..args, width: width, height: height)#label(url)]
+}
