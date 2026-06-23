@@ -74,10 +74,16 @@ function prevSlide() {
 function showSlide(idx, quiet = false) {
     currentSlide = idx
     slides.forEach((slide, currentIdx) => {
+        let videos = Array.from(slide.querySelectorAll("video"))
         if (currentIdx !== idx) {
             slide.classList.remove("visible")
+            videos.forEach(video => {
+                video.pause()
+                requestAnimationFrame(() => video.currentTime = 0)
+            })
         } else {
             slide.classList.add("visible")
+            videos.forEach(video => video.play())
         }
     })
     if (!quiet) {
@@ -91,16 +97,17 @@ function createVideos() {
         .filter(element => element.dataset.typstLabel)
         .map(anchor => {
             const video = document.createElement("video")
+            const image = anchor.querySelector("image")
+            if (!image) {
+                console.log("no image on", anchor)
+                return
+            }
             const src = anchor.dataset.typstLabel
             video.src = src.startsWith("http") ? src : "./" + src
             video.loop = true
             video.preload = "auto"
-            updateGeometry(video, anchor)
-            document.body.appendChild(video)
-            document.addEventListener("slideswitched", () => {
-                updateGeometry(video, anchor)
-                handlePlayback(video)
-            })
+            image.appendChild(video)
+            image.outerHTML = `<foreignObject width="${image.attributes.width.value}" height="${image.attributes.height.value}">` + image.innerHTML + `</foreignObject>`
         })
 }
 
@@ -110,16 +117,6 @@ function updateGeometry(video, anchor) {
     video.style.top = y + 'px'
     video.style.width = width + 'px'
     video.style.height = height + 'px'
-}
-
-function handlePlayback(video) {
-    if (video.style.width === 0 || video.style.height === 0) {
-        video.pause()
-        return
-    }
-
-    video.currentTime = 0
-    video.play()
 }
 
 function createTimer() {

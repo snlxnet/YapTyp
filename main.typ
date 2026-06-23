@@ -41,11 +41,11 @@ Press `n` to open speaker notes
 
 #box[
   == Video Demo
-  #vid("omni.mp4", height: 80%)
+  #box(clip: true, radius: 1em, vid("omni.mp4", height: 80%))
 
   #set text(size: 5mm)
 
-  Note that the player will try to take up 100% of the available space by default
+  Videos behave like images now
 ]
 #notes[
   The file is from #link("https://commons.wikimedia.org/wiki/File:Butterfly_catastrophe_animation.webm")[wikimedia commons]
