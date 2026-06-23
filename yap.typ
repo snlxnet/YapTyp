@@ -34,28 +34,19 @@
     src: url,
   )
 } else {
-  let width = none
-  let height = none
   let props = args.named()
 
+  let placeholder = []
   if url.ends-with(".mp4") {
     let metadata = vidata.from(read(url, encoding: none))
     let video = eval(str(metadata))
 
-    if "width" in props and "height" in props {
-      width = props.width
-      height = props.height
-    } else if "width" in props {
-      width = props.width
-      height = video.height / video.width * props.width
-    } else if "height" in props {
-      height = props.height
-      width = video.width / video.height * props.height
-    } else {
-      width = video.width
-      height = video.height
-    }
+    placeholder = ```xml
+      <svg viewBox="0 0 WIDTH HEIGHT" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:h5="http://www.w3.org/1999/xhtml">
+      </svg>
+    ```.text.replace("WIDTH", str(video.width)).replace("HEIGHT", str(video.height))
+    placeholder = image(bytes(placeholder), format: "svg")
   }
 
-  [#box(fill: rgb("12345600"), ..args, width: width, height: height)#label(url)]
+  [#box(fill: rgb("12345678"), ..args, placeholder)#label(url)]
 }

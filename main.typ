@@ -41,7 +41,9 @@ Press `n` to open speaker notes
 
 #box[
   == Video Demo
-  #vid("omni.mp4", width: 300pt)
+  #vid("omni.mp4", height: 80%)
+
+  #set text(size: 5mm)
 
   Note that the player will try to take up 100% of the available space by default
 ]
