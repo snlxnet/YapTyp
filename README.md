@@ -31,7 +31,6 @@ If you have Nix, you can run `nix-shell`.
 
 - The [typst](https://typst.app) compiler is the heart of this project
 - [Catppuccin](https://github.com/catppuccin/typst) is the theme used for speaker notes by default
-- `demo.webm` is from WikiMedia Commons, [source](https://commons.wikimedia.org/wiki/File:Butterfly_catastrophe_animation.webm)
 
 ## Project Status
 This was built in a few days, I do intend to keep working on it,
