@@ -39,7 +39,7 @@
   let placeholder = []
   if url.ends-with(".mp4") {
     let metadata = vidata.from(read(url, encoding: none))
-    let video = eval(str(metadata))
+    let video = eval(str(metadata)).find(track => track.type == "Video")
 
     placeholder = ```xml
       <svg viewBox="0 0 WIDTH HEIGHT" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:h5="http://www.w3.org/1999/xhtml">
