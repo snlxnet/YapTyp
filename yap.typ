@@ -1,3 +1,5 @@
+#let vidata = plugin("vidata.wasm") // https://github.com/snlxnet/vidata
+
 #let notes(body) = context if target() != "html" {
   place(top + left)[
     #box(
@@ -31,6 +33,20 @@
     controls: true,
     src: url,
   )
-} else [
-  #box(width: 100%, height: 100%, fill: rgb("ffffff00"), ..args) #label(url)
-]
+} else {
+  let props = args.named()
+
+  let placeholder = []
+  if url.ends-with(".mp4") {
+    let metadata = vidata.from(read(url, encoding: none))
+    let video = eval(str(metadata)).find(track => track.type == "Video")
+
+    placeholder = ```xml
+      <svg viewBox="0 0 WIDTH HEIGHT" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:h5="http://www.w3.org/1999/xhtml">
+      </svg>
+    ```.text.replace("WIDTH", str(video.width)).replace("HEIGHT", str(video.height))
+    placeholder = image(bytes(placeholder), format: "svg")
+  }
+
+  [#box(fill: rgb("12345678"), ..args, placeholder)#label(url)]
+}
