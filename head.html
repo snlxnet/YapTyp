@@ -38,15 +38,16 @@
     }
     #sidebar {
       box-sizing: border-box;
-      display: grid;
       grid-template-rows: 1fr auto;
       height: 100dvh;
       max-width: 50ch;
       font: var(--font);
       color: var(--notes-fg);
+      display: none;
+      padding: 1em;
+      gap: 1em;
       &:has(#notes:not(:empty)) {
-        padding: 1em;
-        gap: 1em;
+        display: grid;
       }
     }
     #notes {
