@@ -46,7 +46,7 @@ Press `n` to open speaker notes
   Videos behave like images now
 ]
 #notes[
-  The file is from #link("https://commons.wikimedia.org/wiki/File:Butterfly_catastrophe_animation.webm")[wikimedia commons]
+  #lorem(1000)
 ]
 #next()
 

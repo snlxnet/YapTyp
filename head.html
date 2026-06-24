@@ -35,17 +35,26 @@
       width: 100%;
       height: 100%;
     }
-    .timer {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      font-size: 2rem;
-      padding: 1rem 1.62rem;
-      color: #cdd6f4;
-      background: #1e1e2e;
-      font-family: monospace;
-      border-top-right-radius: 1rem;
+    .highlight {
+      color: #fab387;
+    }
+    #sidebar {
+      display: grid;
+      grid-template-rows: 1fr auto;
+      height: 100dvh;
+      max-width: 50ch;
+    }
+    #notes, #timer {
+      overflow-y: auto;
+      padding: 1rem;
+      &:empty {
+        padding: 0rem;
+      }
     }
   </style>
 </head>
 <body>
+<div id="sidebar">
+  <main id="notes"></main>
+  <div id="timer"></div>
+</div>

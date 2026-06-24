@@ -1,18 +1,42 @@
 <script>
 const slides = document.querySelectorAll("svg")
-const notes = document.querySelectorAll('[data-typst-label="note"]')
 const notesMode = window.location.search.endsWith("notes")
 
 const channel = new BroadcastChannel("control")
 channel.addEventListener("message", ({data: idx}) => showSlide(idx, true))
 
+if (notesMode) {
+    createTimer()
+    const parent = document.getElementById("notes")
+    Array.from(slides)
+        .map(findNotes)
+        .map(wrapNotes)
+        .forEach(el => parent.appendChild(el))
+    const timer = document.getElementById("timer")
+    timer.textContent = "00:00"
+}
+
 let currentSlide = 0
 showSlide(currentSlide)
 createVideos()
-if (notesMode) {
-    createTimer()
-} else {
-    notes.forEach(note => note.remove())
+
+function findNotes(parent) {
+    return Array.from(parent.querySelectorAll("[data-typst-label]"))
+        .filter(element => element.dataset.typstLabel)
+        .filter(element => element.dataset.typstLabel.startsWith("note://"))
+        .map(element => element.dataset.typstLabel.replace("note://", ""))
+        .join("\n")
+}
+
+function wrapNotes(note, slideIdx) {
+    const container = document.createElement("div")
+    container.innerHTML = note
+    const heading = document.createElement("h2")
+    heading.textContent = "Slide " + slideIdx
+    heading.id = "notes" + slideIdx
+    heading.classList.add("note-title")
+    container.prepend(heading)
+    return container
 }
 
 document.querySelectorAll("a").forEach(el => el.addEventListener("click", (event) => {
@@ -72,6 +96,9 @@ function prevSlide() {
 }
 
 function showSlide(idx, quiet = false) {
+    document.querySelectorAll(".note-title").forEach(el => el.classList.remove("highlight"))
+    document.getElementById("notes"+idx)?.classList.add("highlight")
+    console.log("notes"+idx, document.getElementById("notes"+idx))
     currentSlide = idx
     slides.forEach((slide, currentIdx) => {
         let videos = Array.from(slide.querySelectorAll("video"))
@@ -99,8 +126,7 @@ function createVideos() {
             const video = document.createElement("video")
             const image = anchor.querySelector("image")
             if (!image) {
-                console.log("no image on", anchor)
-                return
+                return // this is either a note or a user's label
             }
             const src = anchor.dataset.typstLabel
             video.src = src.startsWith("http") ? src : "./" + src
@@ -122,15 +148,12 @@ function updateGeometry(video, anchor) {
 function createTimer() {
     const started = new Date()
 
-    const timer = document.createElement("span")
-    timer.classList.add("timer")
+    const timer = document.getElementById("timer")
 
     setInterval(() => {
         const seconds = (new Date() - started) / 1000
         timer.textContent = prettifyNumber(seconds / 60) + ":" + prettifyNumber(seconds % 60)
     }, 1000)
-
-    document.body.appendChild(timer)
 }
 
 function prettifyNumber(x) {

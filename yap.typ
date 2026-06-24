@@ -1,25 +1,36 @@
 #let vidata = plugin("vidata.wasm") // https://github.com/snlxnet/vidata
 
+#let to-html(it) = {
+  if type(it) == str {
+    it
+  } else if type(it) != content {
+    str(it)
+  } else if it.has("text") {
+    it.text
+  } else if it.has("children") {
+    it.children.map(to-html).join()
+  } else if it.has("body") {
+    let wrapper = if it.func() == strong {
+      ("<strong>", "</strong>")
+    } else if it.func() == emph {
+      ("<em>", "<em>")
+    } else if it.func() == heading {
+      let level = str(it.depth)
+      ("<h"+level+">", "</h"+level+">")
+    } else if it.func() == link {
+      ("<a href=\""+it.dest+"\">", "</a>")
+    } else {
+      ("", )
+    }
+    wrapper.first() + to-html(it.body) + wrapper.last()
+  } else if it == [ ] {
+    " "
+  }
+}
+
 #let notes(body) = context if target() != "html" {
-  place(top + left)[
-    #box(
-      width: 100%,
-      height: 100%,
-      outset: 50%,
-      fill: rgb("1e1e2e"),
-      [
-        #set text(
-          size: 18pt,
-          font: "DejaVu Sans Mono",
-          fill: rgb("cdd6f4"),
-        )
-        #show emph: set text(fill: rgb("b4befe"))
-        #show strong: set text(fill: rgb("b4befe"))
-        #show link: set text(fill: rgb("a6e3a1"))
-        #body
-      ],
-    )<note>
-  ]
+  let url = "note://" + to-html(body)
+  place(top + left)[#box(width: 0mm, height: 0mm, fill: none, stroke: none)#label(url)]
 } else {
   block(body)
 }
