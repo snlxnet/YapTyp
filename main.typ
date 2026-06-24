@@ -43,8 +43,6 @@ Press `n` to open speaker notes
   == Video Demo
   #box(clip: true, radius: 1em, vid("omni.mp4", height: 80%))
 
-  #set text(size: 5mm)
-
   Videos behave like images now
 ]
 #notes[
