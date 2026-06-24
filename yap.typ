@@ -5,6 +5,8 @@
     it
   } else if type(it) != content {
     str(it)
+  } else if it.func() == parbreak {
+    "</p><p>"
   } else if it.has("text") {
     it.text
   } else if it.has("children") {
@@ -16,7 +18,7 @@
       ("<em>", "<em>")
     } else if it.func() == heading {
       let level = str(it.depth)
-      ("<h"+level+">", "</h"+level+">")
+      ("#"*level+" ", "\n")
     } else if it.func() == link {
       ("<a href=\""+it.dest+"\">", "</a>")
     } else {
@@ -29,7 +31,7 @@
 }
 
 #let notes(body) = context if target() != "html" {
-  let url = "note://" + to-html(body)
+  let url = "note://<p>" + to-html(body) + "</p>"
   place(top + left)[#box(width: 0mm, height: 0mm, fill: none, stroke: none)#label(url)]
 } else {
   block(body)

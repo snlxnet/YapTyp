@@ -42,20 +42,12 @@ function wrapNotes(note, slideIdx) {
 document.querySelectorAll("a").forEach(el => el.addEventListener("click", (event) => {
     event.stopPropagation()
 }))
-document.addEventListener("click", (event) => {
-    const x = event.clientX / window.innerWidth
-    const y = event.clientY / window.innerHeight
-    if (y < 0.3) {
-        document.body.requestFullscreen()
-        firstSlide()
-        return
-    }
-    if (x > 0.5) {
-        nextSlide()
-    } else {
-        prevSlide()
-    }
-})
+document.getElementById("full").onclick = () => {
+    document.body.requestFullscreen()
+    firstSlide()
+}
+document.getElementById("next").onclick = nextSlide
+document.getElementById("prev").onclick = prevSlide
 document.addEventListener("keydown", (event) => {
     const actions = {
         ArrowRight: nextSlide,
