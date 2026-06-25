@@ -62,12 +62,14 @@
       em { color: var(--notes-em); }
       strong { color: var(--notes-strong); }
       p { margin: 1em 0; }
+      ul, ol { margin-left: 2em; }
     }
     body:has(#notes:not(:empty)) {
       padding-right: 1em;
     }
     @media (max-width: 90ch) {
       body:has(#notes:not(:empty)) {
+        padding-right: 0em;
         &>svg {
           display: none;
         }

@@ -38,11 +38,7 @@ function wrapNotes(note, slideIdx) {
 document.querySelectorAll("a").forEach(el => el.addEventListener("click", (event) => {
     event.stopPropagation()
 }))
-document.getElementById("full").onclick = () => {
-    document.body.requestFullscreen()
-    document.getElementById("notes").innerHTML = ""
-    firstSlide()
-}
+document.getElementById("full").onclick = fullscreen
 document.getElementById("next").onclick = nextSlide
 document.getElementById("prev").onclick = prevSlide
 document.addEventListener("keydown", (event) => {
@@ -53,16 +49,16 @@ document.addEventListener("keydown", (event) => {
         ArrowUp: prevSlide,
         Home: firstSlide,
         End: lastSlide,
-        p: openNotes, // presenter view
-        n: openNotes, // note view
-        s: openNotes, // speaker notes
+        f: fullscreen,
     }
 
     actions[event.key]()
 })
 
-function openNotes() {
-    open(window.location + "?mode=notes", undefined, { popup: true })
+function fullscreen() {
+    document.body.requestFullscreen()
+    document.getElementById("notes").innerHTML = ""
+    firstSlide()
 }
 
 function firstSlide() { showSlide(0) }
@@ -153,7 +149,7 @@ function createTimer() {
 
 function prettifyNumber(x) {
     if (x > 100) {
-        return x
+        return Math.floor(x)
     }
 
     return ('00' + Math.floor(x)).slice(-2)

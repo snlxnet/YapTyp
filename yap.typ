@@ -21,6 +21,10 @@
       ("#"*level+" ", "\n")
     } else if it.func() == link {
       ("<a href=\""+it.dest+"\">", "</a>")
+    } else if it.func() == list.item {
+      ("<ul><li>", "</li></ul>")
+    } else if it.func() == enum.item {
+      ("<ol><li>", "</li></ol>")
     } else {
       ("", )
     }
@@ -31,7 +35,7 @@
 }
 
 #let notes(body) = context if target() != "html" {
-  let url = "note://<p>" + to-html(body) + "</p>"
+  let url = "note://<p>" + to-html(body).replace("</ul> <ul>", "").replace("</ol> <ol>", "") + "</p>"
   place(top + left)[#box(width: 0mm, height: 0mm, fill: none, stroke: none)#label(url)]
 } else {
   block(body)
