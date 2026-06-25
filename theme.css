@@ -1,0 +1,13 @@
+:root {
+  --notes-bg: #1e1e2e;
+  --notes-fg: #cdd6f4;
+  --notes-focus: #cba6f7;
+  --notes-link: #a6e3a1;
+  --notes-em: #a6e3a1;
+  --notes-strong: #a6e3a1;
+  --notes-radius: 1rem;
+  --timer-bg: #a6e3a1;
+  --timer-fg: #1e1e2e;
+  --slide-bg: #11111b;
+  --font: 16px monospace;
+}
