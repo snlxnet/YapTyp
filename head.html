@@ -15,23 +15,33 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 100vh;
+      min-height: 100vh;
       background: var(--slide-bg);
     }
     svg {
-      width: 100vw;
+      width: 100%;
       height: unset;
       display: none;
+    }
+    body.book-mode svg {
+      height: 100dvh;
+      width: unset;
+    }
+    body.book-mode {
+      flex-wrap: wrap;
+      gap: 1em;
     }
     svg.visible {
       display: block;
     }
+    /*
     @media (min-aspect-ratio: 16/9) {
       svg {
         width: unset;
         height: 100dvh;
       }
     }
+    */
     video {
       width: 100%;
       height: 100%;

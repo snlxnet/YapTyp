@@ -5,17 +5,25 @@ let lastIntervalId = 0
 const channel = new BroadcastChannel("control")
 channel.addEventListener("message", ({data: idx}) => showSlide(idx, true))
 
-const parent = document.getElementById("notes")
+const notes = document.getElementById("notes")
 Array.from(slides)
     .map(findNotes)
     .filter(Boolean)
     .map(wrapNotes)
-    .forEach(el => parent.appendChild(el))
+    .forEach(el => notes.appendChild(el))
 const timer = document.getElementById("timer")
 
 let currentSlide = 0
 showSlide(currentSlide)
 createVideos()
+
+if (notes.childElementCount === 0) {
+    document.body.classList.add("book-mode")
+    showAll()
+    document.querySelectorAll("video").forEach(video => {
+        video.setAttribute("controls", "true")
+    })
+}
 
 function findNotes(parent) {
     return Array.from(parent.querySelectorAll("[data-typst-label]"))
@@ -79,6 +87,12 @@ function prevSlide() {
     } else {
         showSlide(currentSlide - 1)
     }
+}
+
+function showAll() {
+    slides.forEach((slide) => {
+        slide.classList.add("visible")
+    })
 }
 
 function showSlide(idx, quiet = false) {
