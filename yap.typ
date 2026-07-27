@@ -1,4 +1,6 @@
 #let vidata = plugin("vidata.wasm") // https://github.com/snlxnet/vidata
+#let yap-enable-fs = state("yap-enable-fs", false)
+#let use-local-videos() = yap-enable-fs.update((_current) => true)
 
 #let to-html(it) = {
   if type(it) == str {
@@ -45,25 +47,46 @@
   pagebreak()
 }
 
-#let vid(url, ..args) = context if target() == "html" {
+#let vid(url, ..args, aspect-ratio: "16/9") = context if target() == "html" {
   html.video(
     controls: true,
     src: url,
   )
 } else {
-  let props = args.named()
+  let vertical = true
 
-  let placeholder = []
-  if url.ends-with(".mp4") {
+  let placeholder = ```xml
+    <svg viewBox="0 0 WIDTH HEIGHT" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:h5="http://www.w3.org/1999/xhtml">
+    </svg>
+  ```.text
+
+  // Auto aspect ratio
+  if (not url.contains("://")) and yap-enable-fs.get() and url.ends-with(".mp4") {
     let metadata = vidata.from(read(url, encoding: none))
     let video = eval(str(metadata)).find(track => track.type == "Video")
+    vertical = video.height > video.width
 
-    placeholder = ```xml
-      <svg viewBox="0 0 WIDTH HEIGHT" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:h5="http://www.w3.org/1999/xhtml">
-      </svg>
-    ```.text.replace("WIDTH", str(video.width)).replace("HEIGHT", str(video.height))
-    placeholder = image(bytes(placeholder), format: "svg")
+    placeholder = placeholder.replace("WIDTH", str(video.width)).replace("HEIGHT", str(video.height))
   }
+
+  // Manual aspect ratio
+  let width = float(eval(aspect-ratio))
+  let height = 1.0
+  vertical = height > width
+  placeholder = placeholder
+    .replace("WIDTH", str(width))
+    .replace("HEIGHT", str(height))
+
+  // Build the image
+  placeholder = image(
+    bytes(placeholder),
+    format: "svg",
+    ..if vertical or "height" in args.named() {
+      (height: 100%)
+    } else {
+      (width: 100%)
+    }
+  )
 
   [#box(fill: rgb("12345678"), ..args, placeholder)#label(url)]
 }

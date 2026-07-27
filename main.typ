@@ -1,4 +1,5 @@
-#import "./yap.typ": notes, next, vid
+#import "./yap.typ": notes, next, vid, use-local-videos
+#use-local-videos()
 
 #let style(doc) = context if target() == "html" {
   html.link(
@@ -51,7 +52,15 @@ to your Typst documents.
 
 #box[
   == Video Demo
-  #box(clip: true, radius: 1em, vid("omni.mp4", height: 80%))
+  #box(
+    clip: true,
+    radius: 1em,
+    vid(
+      "https://weldlab.github.io/video/omni.mp4",
+      height: 80%,
+      aspect-ratio: "1.333",
+    ),
+  )
 
   Videos behave like images now
 ]
