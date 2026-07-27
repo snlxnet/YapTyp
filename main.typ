@@ -1,7 +1,9 @@
 #import "./lib.typ": video, image, notes, use-local
 #use-local()
 
-// #set page(paper: "presentation-16-9")
+// #let notes(..args) = []
+
+#set page(paper: "presentation-16-9")
 #set text(size: 24pt)
 #set align(horizon)
 #show link: set text(fill: eastern)

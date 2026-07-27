@@ -15,7 +15,7 @@
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      background: #1e1e2e;;
+      background: #1e1e2e;
     }
     body.book-mode {
       flex-wrap: wrap;
@@ -52,8 +52,8 @@
       grid-template-rows: 1fr auto;
       height: 100dvh;
       max-width: 50ch;
-      font: var(--font);
-      color: var(--notes-fg);
+      font: 16px monospace;
+      color: #cdd6f4;
       display: none;
       padding: 1em;
       gap: 1em;
@@ -63,18 +63,16 @@
     }
     #notes {
       overflow-y: auto;
-      scrollbar-color: var(--notes-focus) transparent;
+      scrollbar-color: #cdd6f4 transparent;
       padding: 1rem;
-      background: var(--notes-bg);
-      border-radius: var(--notes-radius);
       &:empty { padding: 0rem; }
-      .highlight { color: var(--notes-focus); }
-      a { color: var(--notes-link); }
-      em { color: var(--notes-em); }
-      strong { color: var(--notes-strong); }
-      p { margin: 1em 0; }
-      ul, ol { margin-left: 2em; }
     }
+    .highlight { color: #94e2d5; }
+    a { color: #94e2d5; }
+    em { color: #94e2d5; }
+    strong { color: #94e2d5; }
+    p { margin: 1em 0; }
+    ul, ol { margin-left: 2em; }
     body:has(#notes:not(:empty)) {
       padding-right: 1em;
     }
@@ -91,10 +89,9 @@
     }
     #controls {
       font-size: 2em;
-      color: var(--timer-fg);
-      background: var(--timer-bg);
       padding: 1rem;
-      border-radius: var(--notes-radius);
+      border-radius: 14pt;
+      border: 3px solid #94e2d5;
       display: flex;
       justify-content: space-between;
       gap: 1em;
@@ -110,7 +107,7 @@
         width: 2rem;
         height: 2rem;
         display: block;
-        stroke: var(--timer-fg);
+        stroke: #cdd6f4;
       }
     }
   </style>
