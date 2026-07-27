@@ -138,7 +138,7 @@ function createVideos() {
             video.loop = true
             video.preload = "auto"
             image.appendChild(video)
-            image.outerHTML = `<foreignObject width="${image.attributes.width.value}" height="${image.attributes.height.value}">` + image.innerHTML + `</foreignObject>`
+            image.outerHTML = `<foreignObject transform="${image.attributes.transform?.value || ''}" width="${image.attributes.width.value}" height="${image.attributes.height.value}">` + image.innerHTML + `</foreignObject>`
         })
 }
 
@@ -151,7 +151,7 @@ function createImages() {
             const rectShape = anchor.attributes.d.value.split(" ")
             const height = rectShape.at(3)
             const width = rectShape.at(5)
-            parent.innerHTML = `<image width="${width}" height="${height}" href="${url}" />`
+            parent.innerHTML = `<foreignObject width="${width}" height="${height}"><img src="${url}" /></foreignObject>`
         })
 }
 

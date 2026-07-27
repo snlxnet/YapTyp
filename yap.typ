@@ -42,7 +42,7 @@
 }
 
 #let video(url, ..args, aspect-ratio: "16/9") = {
-  let vertical = true
+  let vertical = none
 
   let placeholder = ```xml
     <svg viewBox="0 0 WIDTH HEIGHT" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:h5="http://www.w3.org/1999/xhtml">
@@ -61,7 +61,9 @@
   // Manual aspect ratio
   let width = float(eval(aspect-ratio))
   let height = 1.0
-  vertical = height > width
+  if vertical == none {
+    vertical = height > width
+  }
   placeholder = placeholder
     .replace("WIDTH", str(width))
     .replace("HEIGHT", str(height))
@@ -77,7 +79,7 @@
     }
   )
 
-  [#box(fill: rgb("12345678"), ..args, placeholder)#label("vid://" + url)]
+  [#box(fill: rgb("12345678"), ..args, align(center+horizon, placeholder))#label("vid://" + url)]
 }
 
 #let img(..args) = [#box(fill: rgb("12345678"), hide(image(..args)))#label("img://" + args.pos().at(0))]
