@@ -16,6 +16,7 @@ const timer = document.getElementById("timer")
 let currentSlide = 0
 showSlide(currentSlide)
 createVideos()
+createImages()
 
 if (notes.childElementCount === 0) {
     document.body.classList.add("book-mode")
@@ -125,19 +126,33 @@ function showSlide(idx, quiet = false) {
 
 function createVideos() {
     Array.from(document.querySelectorAll("[data-typst-label]"))
-        .filter(element => element.dataset.typstLabel)
+        .filter(element => element.dataset.typstLabel?.startsWith("vid://"))
         .map(anchor => {
             const video = document.createElement("video")
             const image = anchor.querySelector("image")
             if (!image) {
-                return // this is either a note or a user's label
+                console.error("Failed to create video", anchor)
+                return
             }
-            const src = anchor.dataset.typstLabel
+            const src = anchor.dataset.typstLabel.replace("vid://", "")
             video.src = src.startsWith("http") ? src : "./" + src
             video.loop = true
             video.preload = "auto"
             image.appendChild(video)
             image.outerHTML = `<foreignObject width="${image.attributes.width.value}" height="${image.attributes.height.value}">` + image.innerHTML + `</foreignObject>`
+        })
+}
+
+function createImages() {
+    Array.from(document.querySelectorAll("[data-typst-label]"))
+        .filter(element => element.dataset.typstLabel?.startsWith("img://"))
+        .map(parent => {
+            const url = parent.dataset.typstLabel.replace("img://", "")
+            const anchor = parent.querySelector(".typst-shape")
+            const rectShape = anchor.attributes.d.value.split(" ")
+            const height = rectShape.at(3)
+            const width = rectShape.at(5)
+            parent.innerHTML = `<image width="${width}" height="${height}" href="${url}" />`
         })
 }
 

@@ -88,5 +88,7 @@
     }
   )
 
-  [#box(fill: rgb("12345678"), ..args, placeholder)#label(url)]
+  [#box(fill: rgb("12345678"), ..args, placeholder)#label("vid://" + url)]
 }
+
+#let img(..args) = [#box(fill: rgb("12345678"), hide(image(..args)))#label("img://" + args.pos().at(0))]

@@ -1,4 +1,4 @@
-#import "./yap.typ": notes, next, vid, use-local-videos
+#import "./yap.typ": notes, next, vid, img as image, use-local-videos
 #use-local-videos()
 
 #let style(doc) = context if target() == "html" {
@@ -50,20 +50,20 @@ to your Typst documents.
 ]
 #next()
 
-#box[
-  == Video Demo
-  #box(
-    clip: true,
-    radius: 1em,
-    vid(
-      "https://weldlab.github.io/video/omni.mp4",
-      height: 80%,
-      aspect-ratio: "1.333",
-    ),
-  )
+== Video Demo
+#box(
+  clip: true,
+  radius: 1em,
+  height: 70%,
+  vid(
+    "https://weldlab.github.io/video/omni.mp4",
+    height: 100%,
+    aspect-ratio: "1.333",
+  ),
+)
 
-  Videos behave like images now
-]
+Videos behave like images now
+
 #notes[
   All the shortcuts work as you would expect:
   - #sym.arrow.r #sym.arrow.b go to the next slide
@@ -74,6 +74,25 @@ to your Typst documents.
 
   If you duplicate the tab and press #sym.arrow.r, for example,
   both tabs will switch to the next slide.
+]
+#next()
+
+== Optimized image export
+#box(
+  clip: true,
+  radius: 1em,
+  height: 70%,
+  image("yap.svg", height: 100%),
+)
+
+Images can be bundled or separate
+
+#notes[
+  When we exported one presentation with a lot of images,
+  the HTML file was like 70 megabytes.
+
+  This can now be solved by using YapTyp's image function
+  which references an external image instead of embedding it.
 ]
 #next()
 
