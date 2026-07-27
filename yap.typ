@@ -1,6 +1,6 @@
 #let vidata = plugin("vidata.wasm") // https://github.com/snlxnet/vidata
-#let yap-enable-fs = state("yap-enable-fs", false)
-#let use-local-videos() = yap-enable-fs.update((_current) => true)
+#let fs-enabled = state("yap-enable-fs", false)
+#let use-local() = fs-enabled.update((_current) => true)
 
 #let to-html(it) = {
   if type(it) == str {
@@ -36,23 +36,12 @@
   }
 }
 
-#let notes(body) = context if target() != "html" {
+#let notes(body) = {
   let url = "note://<p>" + to-html(body).replace("</ul> <ul>", "").replace("</ol> <ol>", "") + "</p>"
   place(top + left)[#box(width: 0mm, height: 0mm, fill: none, stroke: none)#label(url)]
-} else {
-  block(body)
 }
 
-#let next() = context if target() != "html" {
-  pagebreak()
-}
-
-#let vid(url, ..args, aspect-ratio: "16/9") = context if target() == "html" {
-  html.video(
-    controls: true,
-    src: url,
-  )
-} else {
+#let video(url, ..args, aspect-ratio: "16/9") = {
   let vertical = true
 
   let placeholder = ```xml
@@ -61,7 +50,7 @@
   ```.text
 
   // Auto aspect ratio
-  if (not url.contains("://")) and yap-enable-fs.get() and url.ends-with(".mp4") {
+  if (not url.contains("://")) and fs-enabled.get() and url.ends-with(".mp4") {
     let metadata = vidata.from(read(url, encoding: none))
     let video = eval(str(metadata)).find(track => track.type == "Video")
     vertical = video.height > video.width

@@ -1,11 +1,8 @@
 tmp="${YAPTYP_DIR:-.}"
 
-typst compile --features=html main.typ $tmp/slide{0p}.svg
-typst compile --features=html main.typ article.html &> /dev/null
+typst compile main.typ $tmp/page{0p}.svg
 
-cat $tmp/head.html $tmp/slide*.svg $tmp/tail.html > player.html
-rm $tmp/slide*.svg
+cat $tmp/head.html $tmp/page*.svg $tmp/tail.html > player.html
+rm $tmp/page*.svg
 
-echo 'Compilation complete. Saved:'
-echo '- player.html'
-echo '- article.html'
+echo 'Compilation complete. Saved player.html'

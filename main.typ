@@ -1,20 +1,10 @@
-#import "./yap.typ": notes, next, vid, img as image, use-local-videos
-#use-local-videos()
+#import "./lib.typ": video, image, notes, use-local
+#use-local()
 
-#let style(doc) = context if target() == "html" {
-  html.link(
-    rel: "stylesheet",
-    href: "styles.css",
-  )
-  doc
-} else {
-  set page(paper: "presentation-16-9")
-  set text(size: 24pt)
-  set align(horizon)
-  show link: set text(fill: eastern)
-  doc
-}
-#show: style
+#set page(paper: "presentation-16-9")
+#set text(size: 24pt)
+#set align(horizon)
+#show link: set text(fill: eastern)
 #show "Typst": set text(fill: eastern)
 
 = YapTyp
@@ -25,7 +15,7 @@ to your Typst documents.
 #notes[
   To hide the notes, press `f` or the fullscreen icon below.
 ]
-#next()
+#pagebreak()
 
 == What YapTyp is
 - HTML Generation
@@ -48,14 +38,14 @@ to your Typst documents.
   Speaker notes don't allow using anything that isn't convertable to MarkDown.
   Example *bold*, _italic_, and https://example.com link text.
 ]
-#next()
+#pagebreak()
 
 == Video Demo
 #box(
   clip: true,
   radius: 1em,
   height: 70%,
-  vid(
+  video(
     "https://weldlab.github.io/video/omni.mp4",
     height: 100%,
     aspect-ratio: "1.333",
@@ -66,16 +56,16 @@ Videos behave like images now
 
 #notes[
   All the shortcuts work as you would expect:
-  - #sym.arrow.r #sym.arrow.b go to the next slide
+  - #sym.arrow.r #sym.arrow.b go to the pagebreak slide
   - #sym.arrow.l #sym.arrow.t go to the previous slide
   - HOME goes to the beginning
   - END goes to the end
   - f starts the fullscreen presentation
 
   If you duplicate the tab and press #sym.arrow.r, for example,
-  both tabs will switch to the next slide.
+  both tabs will switch to the pagebreak slide.
 ]
-#next()
+#pagebreak()
 
 == Optimized image export
 #box(
@@ -94,13 +84,5 @@ Images can be bundled or separate
   This can now be solved by using YapTyp's image function
   which references an external image instead of embedding it.
 ]
-#next()
+#pagebreak()
 
-#context if target() != "html" [
-  This presentaiton is also available as an article,\
-  click #link("article.html")[here] to open
-]
-#notes[
-  YapTyp also has article mode, which is when it exports an HTML page.
-  #link("https://snlxnet.github.io/YapTyp/article.html")[Example.]
-]
