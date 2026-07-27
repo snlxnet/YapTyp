@@ -14,8 +14,13 @@
   doc
 }
 #show: style
+#show "Typst": set text(fill: eastern)
 
 = YapTyp
+
+Add videos, web images, iframes, and interactive speaker notes
+to your Typst documents.
+
 #notes[
   To hide the notes, press `f` or the fullscreen icon below.
 ]
@@ -28,13 +33,19 @@
 - Tab Sync
 
 #notes[
-  *YapTyp* is Yet Another Presentation tool for TYPst that
+  *YapTyp* was initially built for my talk at the uni.
+  The idea was that different versions of PowerPoint and LibreOffice
+  handle videos and speaker notes differently, but the browser is the same everywhere.
+
+  This project
   - generates HTML, not PDF
   - allows inserting videos into the presentation
+    - but then we needed to make a book so if you don't use the notes it will run in book mode
   - allows opening a window with speaker notes (kinda like impressjs)
-  - but does not support animations (yet)
+  - but does not support animations
 
-  Example *bold*, _italic_, and https://example.com link text
+  Speaker notes don't allow using anything that isn't convertable to MarkDown.
+  Example *bold*, _italic_, and https://example.com link text.
 ]
 #next()
 

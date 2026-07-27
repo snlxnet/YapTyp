@@ -2,15 +2,19 @@
 
 [![preview](./preview-banner.svg)](https://snlxnet.github.io/YapTyp/)
 
-This is Yet Another Presentation builder for Typst, the key differences from the rest are:
-- it generates HTML, not PDF
-- it allows inserting videos into the presentation
-- it allows opening a window with speaker notes (like impressjs)
-- and generates an article version (slides + notes)
+Add videos, web images, iframes, and interactive speaker notes
+to your Typst documents.
 
-Things worth keeping in mind:
-- no animation support
-- very little opinions - the styling is up to you
+YapTyp was initially built for my talk at the uni.
+The idea was that different versions of PowerPoint and LibreOffice
+handle videos and speaker notes differently, but the browser is the same everywhere.
+
+This project
+- generates HTML, not PDF
+- allows inserting videos into the presentation
+  - but then we needed to make a book so if you don't use the notes it will run in book mode
+- allows opening a window with speaker notes (kinda like impressjs)
+- but does not support animations
 
 ## Getting Started
 
