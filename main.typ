@@ -1,6 +1,8 @@
 #import "./lib.typ": video, image, notes, use-local
 #use-local()
 
+#let notes(..args) = []
+
 #set page(paper: "presentation-16-9")
 #set text(size: 24pt)
 #set align(horizon)
@@ -84,5 +86,4 @@ Images can be bundled or separate
   This can now be solved by using YapTyp's image function
   which references an external image instead of embedding it.
 ]
-#pagebreak()
 

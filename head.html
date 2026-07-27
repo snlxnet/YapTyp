@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
   <title>YapTyp Player</title>
-  <link rel="stylesheet" href="theme.css">
   <style>
     * {
       margin: 0;
@@ -16,7 +15,11 @@
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      background: var(--slide-bg);
+      background: #1e1e2e;;
+    }
+    body.book-mode {
+      flex-wrap: wrap;
+      gap: 1em;
     }
     svg {
       width: 100%;
@@ -26,22 +29,17 @@
     body.book-mode svg {
       height: 100dvh;
       width: unset;
-    }
-    body.book-mode {
-      flex-wrap: wrap;
-      gap: 1em;
-    }
-    svg.visible {
       display: block;
     }
-    /*
     @media (min-aspect-ratio: 16/9) {
       svg {
         width: unset;
         height: 100dvh;
       }
     }
-    */
+    svg.visible {
+      display: block;
+    }
     video {
       width: 100%;
       height: 100%;
@@ -113,6 +111,7 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="theme.css">
 </head>
 <body>
 <div id="sidebar">
