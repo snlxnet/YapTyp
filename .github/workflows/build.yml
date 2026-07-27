@@ -1,6 +1,9 @@
 ---
-name: Build The Demo
-on: [push]
+name: Build
+on:
+  push:
+    branches:
+      - main
 permissions:
   contents: read
   pages: write
@@ -18,8 +21,7 @@ jobs:
         uses: actions/configure-pages@v5
       - name: build
         run: |
-          ./bundle.sh
-          mv player.html index.html
+          echo todo
       - name: upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
