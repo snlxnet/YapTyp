@@ -10,7 +10,7 @@
 
 html {
   background: #1e1e2e;
-  font-size: 14pt;
+  font-size: 16px;
   font-family: monospace;
 }
 
@@ -22,9 +22,9 @@ body {
 
 header {
   padding: 1em;
-  font-size: 16pt;
+  font-size: 1.2em;
   border: 3px solid #94e2d5;
-  border-radius: 14pt;
+  border-radius: 1em;
 
   display: flex;
   align-items: center;
@@ -67,7 +67,7 @@ a {
 iframe {
   display: block;
   width: 100%;
-  border-radius: 14pt;
+  border-radius: 1em;
   border: none;
 }
 
@@ -77,7 +77,7 @@ main {
 
   h2, h3 {
     color: #94e2d5;
-    font-size: 16pt;
+    font-size: 1.2em;
     padding-top: 1em;
   }
 
@@ -102,7 +102,7 @@ main {
     align-items: center;
     padding: 1em;
 
-    border-radius: 14pt;
+    border-radius: 1em;
     border: 3px solid #cdd6f4;
     cursor: pointer;
 

@@ -1,8 +1,6 @@
 #import "./lib.typ": video, image, notes, use-local
 #use-local()
 
-// #let notes(..args) = []
-
 #set page(paper: "presentation-16-9")
 #set text(size: 24pt)
 #set align(horizon)
@@ -48,7 +46,7 @@ to your Typst documents.
   radius: 1em,
   height: 70%,
   video(
-    "https://weldlab.github.io/video/omni.mp4",
+    "omni.mp4", // can accept https://path/to/file.mp4
     height: 100%,
     aspect-ratio: "1.333",
   ),

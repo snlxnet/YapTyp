@@ -68,9 +68,16 @@
       &:empty { padding: 0rem; }
     }
     .highlight { color: #94e2d5; }
+    h2 {
+      font-weight: normal;
+      font-size: 1.2em;
+    }
     a { color: #94e2d5; }
     em { color: #94e2d5; }
-    strong { color: #94e2d5; }
+    strong {
+      font-weight: normal;
+      color: #94e2d5;
+    }
     p { margin: 1em 0; }
     ul, ol { margin-left: 2em; }
     body:has(#notes:not(:empty)) {
@@ -142,22 +149,23 @@ const channel = new BroadcastChannel("control")
 channel.addEventListener("message", ({data: idx}) => showSlide(idx, true))
 
 const notes = document.getElementById("notes")
-Array.from(slides)
+const noteBlocks = Array.from(slides)
     .map(findNotes)
-    .filter(Boolean)
+if (noteBlocks.filter(Boolean).length > 0) {
+  noteBlocks
     .map(wrapNotes)
     .forEach(el => notes.appendChild(el))
+} else {
+  document.body.classList.add("book-mode")
+  document.querySelectorAll("video").forEach(video => {
+      video.setAttribute("controls", "true")
+  })
+}
+
 const timer = document.getElementById("timer")
 
 let currentSlide = 0
 showSlide(currentSlide)
-
-if (notes.childElementCount === 0) {
-    document.body.classList.add("book-mode")
-    document.querySelectorAll("video").forEach(video => {
-        video.setAttribute("controls", "true")
-    })
-}
 
 function findNotes(parent) {
     return Array.from(parent.querySelectorAll("[data-typst-label]"))
@@ -169,7 +177,7 @@ function findNotes(parent) {
 
 function wrapNotes(note, slideIdx) {
     const container = document.createElement("div")
-    container.innerHTML = note
+    container.innerHTML = note || "<p></p>"
     const heading = document.createElement("h2")
     heading.textContent = "Slide " + slideIdx
     heading.id = "notes" + slideIdx

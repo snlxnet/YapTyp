@@ -1,47 +1,48 @@
-#let vidata = plugin("vidata.wasm") // https://github.com/snlxnet/vidata
+#let vidata = plugin("vidata.wasm") // source: https://github.com/snlxnet/vidata
+
 #let fs-enabled = state("yap-enable-fs", false)
 #let use-local() = fs-enabled.update((_current) => true)
 
-#let to-html(it) = {
-  if type(it) == str {
-    it
-  } else if type(it) != content {
-    str(it)
-  } else if it.func() == parbreak {
-    "</p><p>"
-  } else if it.has("text") {
-    it.text
-  } else if it.has("children") {
-    it.children.map(to-html).join()
-  } else if it.has("body") {
-    let wrapper = if it.func() == strong {
-      ("<strong>", "</strong>")
-    } else if it.func() == emph {
-      ("<em>", "<em>")
-    } else if it.func() == heading {
-      let level = str(it.depth)
-      ("#"*level+" ", "\n")
-    } else if it.func() == link {
-      ("<a href=\""+it.dest+"\">", "</a>")
-    } else if it.func() == list.item {
-      ("<ul><li>", "</li></ul>")
-    } else if it.func() == enum.item {
-      ("<ol><li>", "</li></ol>")
-    } else {
-      ("", )
-    }
-    wrapper.first() + to-html(it.body) + wrapper.last()
-  } else if it == [ ] {
-    " "
-  }
-}
-
 #let notes(body) = {
+  let to-html(it) = {
+    if type(it) == str {
+      it
+    } else if type(it) != content {
+      str(it)
+    } else if it.func() == parbreak {
+      "</p><p>"
+    } else if it.has("text") {
+      it.text
+    } else if it.has("children") {
+      it.children.map(to-html).join()
+    } else if it.has("body") {
+      let wrapper = if it.func() == strong {
+        ("<strong>", "</strong>")
+      } else if it.func() == emph {
+        ("<em>", "<em>")
+      } else if it.func() == heading {
+        let level = str(it.depth)
+        ("#"*level+" ", "\n")
+      } else if it.func() == link {
+        ("<a href=\""+it.dest+"\">", "</a>")
+      } else if it.func() == list.item {
+        ("<ul><li>", "</li></ul>")
+      } else if it.func() == enum.item {
+        ("<ol><li>", "</li></ol>")
+      } else {
+        ("", )
+      }
+      wrapper.first() + to-html(it.body) + wrapper.last()
+    } else if it == [ ] {
+      " "
+    }
+  }
+
   let url = "note://<p>" + to-html(body).replace("</ul> <ul>", "").replace("</ol> <ol>", "") + "</p>"
   place(top + left)[#box(width: 0mm, height: 0mm, fill: none, stroke: none)#label(url)]
 }
 
-#let video(url, ..args, aspect-ratio: "16/9") = {
+#let video(url, ..args, aspect-ratio: "16/9") = context {
   let vertical = none
 
   let placeholder = ```xml
@@ -65,18 +66,13 @@
     vertical = height > width
   }
   placeholder = placeholder
-    .replace("WIDTH", str(width))
-    .replace("HEIGHT", str(height))
+    .replace("WIDTH", str(width*1000))
+    .replace("HEIGHT", str(height*1000))
 
-  // Build the image
+  // Build the placeholder image
   placeholder = image(
     bytes(placeholder),
     format: "svg",
-    ..if vertical or "height" in args.named() {
-      (height: 100%)
-    } else {
-      (width: 100%)
-    }
   )
 
   [#box(fill: rgb("12345678"), ..args, align(center+horizon, placeholder))#label("vid://" + url)]
