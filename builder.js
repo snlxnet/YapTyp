@@ -3,10 +3,15 @@ const fileList = document.getElementById("source-files")
 fileList.oninput = async () => {
   const files = Array.from(fileList.files || [])
 
+  if (!files.length) {
+      return
+  }
+
   const body = document.createElement("div")
-  for (let file of files) {
-    const text = await file.text()
-    body.innerHTML += text
+  if (files[0].type.includes("zip")) {
+      body.innerHTML = await readZip(files[0])
+  } else {
+      body.innerHTML = await readSvgArray(files)
   }
 
   createVideos(body)
@@ -16,6 +21,24 @@ fileList.oninput = async () => {
   const generated = template.replace("INSERT_SVG_HERE", body.innerHTML)
 
   download(generated)
+}
+
+async function readSvgArray(files) {
+    let body = ""
+    for (let file of files) {
+        body += await file.text()
+    }
+    return body
+}
+
+async function readZip(file) {
+    const zip = new JSZip();
+    const { files } = await zip.loadAsync(file)
+    let body = ""
+    for (const file of Object.values(files)) {
+        body += await file.async("string")
+    }
+    return body
 }
 
 function download(text) {
