@@ -5,12 +5,41 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
   <title>YapTyp Builder</title>
+  <link rel="stylesheet" href="builder.css">
 </head>
 <body>
-  <label>
-    Source files
-    <input type="file" multiple id="source-files">
-  </label>
+  <header>
+    <a href="https://snlx.net">
+      <img src="/logo.svg" alt="logo">
+    </a>
+
+    <nav>
+      <a href="https://snlx.net">Home</a>
+      <h1>YapTyp</h1>
+    </nav>
+  </header>
+
+  <iframe src="https://3d.snlx.net/" height="300"></iframe>
+
+  <main>
+    <h2>Writing the document</h2>
+    <p>TODO</p>
+
+    <h2>Hydrating</h2>
+    <ul>
+      <li>
+        If you're using the <a href="https://typst.app">Typst web app</a>,
+        export as SVG and select the zip file
+      </li>
+      <li>
+        If you're using the local compiler, select individual SVGs
+      </li>
+    </ul>
+    <label class="file-input">
+      Select zip / svg
+      <input type="file" multiple id="source-files" accept="image/svg+xml, application/zip, application/x-zip-compressed">
+    </label>
+  </main>
 
   <script src="builder.js">
   </script>
