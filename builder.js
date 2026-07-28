@@ -17,7 +17,7 @@ fileList.oninput = async () => {
   createVideos(body)
   createImages(body)
 
-  const template = await fetch("/template").then(res => res.text())
+  const template = await fetch("template").then(res => res.text())
   const generated = template.replace("INSERT_SVG_HERE", body.innerHTML)
 
   download(generated)
