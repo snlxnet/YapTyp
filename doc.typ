@@ -1,14 +1,20 @@
-#let print-mode = true
+#let print-mode = false
 #import "@preview/tidy:0.4.3"
-#import "@preview/catppuccin:1.1.0": catppuccin, flavors
+#import "@preview/catppuccin:1.1.0": catppuccin, flavors, show-module as ctp-show-module
 
-#let show-module = if print-mode { tidy.show-module } else { catppuccin.show-module }
+#let show-module = if print-mode { tidy.show-module } else { ctp-show-module }
 #let teal = if print-mode { cmyk(100%, 0%, 50%, 0%) } else { flavors.mocha.colors.teal.rgb }
 
 #set page(flipped: true, columns: 2, margin: 1cm)
-#set text(font: "JetBrainsMono NF", size: 11pt)
-#show raw: set text(font: "JetBrainsMono NF", size: 11pt)
-#if print-mode { show: catppuccin.with(flavors.mocha) }
+#set text(font: "JetBrains Mono", size: 11pt)
+#show raw: set text(font: "JetBrains Mono", size: 11pt)
+
+#let global(doc) = if print-mode {
+  doc
+} else {
+  catppuccin.with(flavors.mocha)(doc)
+}
+#show: global
 
 #{
   set text(1.2em)
