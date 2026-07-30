@@ -3,7 +3,20 @@
 #let fs-enabled = state("yap-enable-fs", false)
 #let use-local() = fs-enabled.update((_current) => true)
 
-#let notes(body) = {
+/// Speaker notes for the current page.
+/// Intended for presentations.
+/// Show up on the left in the viewer.
+#let notes(
+  /// The text of the note.
+  /// You can only use
+  /// regular text, *bold*, _italic_,
+  /// #link("https://snlx.net/yaptyp", underline[links]),
+  /// - lists
+  /// 1. and other lists
+  ///
+  /// -> content
+  body
+) = {
   let to-html(it) = {
     if type(it) == str {
       it
@@ -42,7 +55,37 @@
   place(top + left)[#box(width: 0mm, height: 0mm, fill: none, stroke: none)#label(url)]
 }
 
-#let video(url, ..args, aspect-ratio: "16/9") = context {
+/// A video.
+///
+/// You can use it as though it is an image,
+/// wrapping it in boxes, figures, etc.
+///
+/// -> content
+#let video(
+  /// A path to a video file.
+  /// Only tested with .mp4, but may work with other formats.
+  ///
+  /// -> path
+  source,
+  /// The ratio between the top and left sides of the video.
+  ///
+  /// Examples: landscape `"16/9"`, landscape `"4/3"`,
+  /// portrait `"9/16"`, square `"1/1"`, in pixels `"640/480"`,
+  /// as a decimal fraction `"1.333"`.
+  ///
+  /// Default: `"16/9"` or taken from the actual file if you've called `#use-local()`
+  ///
+  /// -> str
+  aspect-ratio: "16/9",
+  /// The width of the video.
+  ///
+  /// -> auto | relative
+  width: auto,
+  /// The height of the video.
+  ///
+  /// -> auto | relative
+  height: auto,
+) = context {
   let vertical = none
 
   let placeholder = ```xml
@@ -51,8 +94,8 @@
   ```.text
 
   // Auto aspect ratio
-  if (not url.contains("://")) and fs-enabled.get() and url.ends-with(".mp4") {
-    let metadata = vidata.from(read(url, encoding: none))
+  if (not source.contains("://")) and fs-enabled.get() and source.ends-with(".mp4") {
+    let metadata = vidata.from(read(source, encoding: none))
     let video = eval(str(metadata)).find(track => track.type == "Video")
     vertical = video.height > video.width
 
@@ -60,14 +103,16 @@
   }
 
   // Manual aspect ratio
-  let width = float(eval(aspect-ratio))
-  let height = 1.0
-  if vertical == none {
-    vertical = height > width
+  {
+    let width = float(eval(aspect-ratio))
+    let height = 1.0
+    if vertical == none {
+      vertical = height > width
+    }
+    placeholder = placeholder
+      .replace("WIDTH", str(width*1000))
+      .replace("HEIGHT", str(height*1000))
   }
-  placeholder = placeholder
-    .replace("WIDTH", str(width*1000))
-    .replace("HEIGHT", str(height*1000))
 
   // Build the placeholder image
   placeholder = image(
@@ -75,7 +120,15 @@
     format: "svg",
   )
 
-  [#box(fill: rgb("12345678"), ..args, align(center+horizon, placeholder))#label("vid://" + url)]
+  [#box(fill: rgb("12345678"), width: width, align(center+horizon, placeholder))#label("vid://" + source)]
 }
 
-#let img(..args) = [#box(fill: rgb("12345678"), hide(image(..args)))#label("img://" + args.pos().at(0))]
+// fit missing!
+#let _optimized-img(..args) = [#box(fill: rgb("12345678"), hide(image(..args)))#label("img://" + args.pos().at(0))]
+
+/// An external image.
+/// Typst's default `#image`'s
+/// are embedded into the SVG, resulting in large file sizes, which
+/// can be a problem if used in a website.
+/// YapTyp's `#image` is a drop-in replacement that loads them separately.
+#let image(..args) = _optimized-img(..args)
