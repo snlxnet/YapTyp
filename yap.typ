@@ -6,17 +6,6 @@
 /// Speaker notes for the current page.
 /// Intended for presentations.
 /// Show up on the left in the viewer.
-///
-/// ```example
-/// #notes[
-///   One thing about speaker notes is that they flip the document
-///   into presentation mode.
-///
-///   So if you add one, the whole document is switched.
-///   Book mode is when pages are displayed either vertically
-///   or in a grid, each one taking up 100% of the screen vertically.
-/// ]
-/// ```
 #let notes(
   /// The text of the note.
   /// You can only use
