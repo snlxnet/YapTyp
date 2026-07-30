@@ -1,6 +1,6 @@
 # YapTyp
 
-[![preview](./preview-banner.svg)](https://snlxnet.github.io/YapTyp/)
+[![banner](./yaptyp.svg)](https://yap.snlx.net)
 
 Browser-optimized paged export for Typst.
 
