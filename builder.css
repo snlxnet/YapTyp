@@ -50,7 +50,8 @@ header {
       color: #cdd6f4;
     }
 
-    span, a {
+    span,
+    a {
       &:not(:last-child)::after {
         content: " |";
         color: #cdd6f4;
@@ -75,13 +76,15 @@ main {
   color: #cdd6f4;
   line-height: 1.6;
 
-  h2, h3 {
+  h2,
+  h3 {
     color: #94e2d5;
     font-size: 1.2em;
     padding-top: 1em;
   }
 
-  ul, ol {
+  ul,
+  ol {
     padding: 1em 0;
     padding-left: 1em;
   }

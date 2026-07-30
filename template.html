@@ -1,290 +1,351 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="light dark">
-  <title>YapTyp Player</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      background: #1e1e2e;
-    }
-    body.book-mode {
-      flex-wrap: wrap;
-      gap: 1em;
-    }
-    svg {
-      width: 100%;
-      height: unset;
-      max-height: 100vh;
-      display: none;
-    }
-    body.book-mode svg {
-      height: 100dvh;
-      width: unset;
-      display: block;
-    }
-    @media (min-aspect-ratio: 16/9) {
-      svg {
-        width: unset;
-        height: 100dvh;
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>YapTyp Player</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
       }
-    }
-    svg.visible {
-      display: block;
-    }
-    video, img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center;
-    }
-    #sidebar {
-      box-sizing: border-box;
-      grid-template-rows: 1fr auto;
-      height: 100dvh;
-      max-width: 50ch;
-      font: 16px monospace;
-      color: #cdd6f4;
-      display: none;
-      padding: 1em;
-      gap: 1em;
-      &:has(#notes:not(:empty)) {
-        display: grid;
-      }
-    }
-    #notes {
-      overflow-y: auto;
-      scrollbar-color: #cdd6f4 transparent;
-      padding: 1rem;
-      &:empty { padding: 0rem; }
-    }
-    .highlight { color: #94e2d5; }
-    h2 {
-      font-weight: normal;
-      font-size: 1.2em;
-    }
-    a { color: #94e2d5; }
-    em { color: #94e2d5; }
-    strong {
-      font-weight: normal;
-      color: #94e2d5;
-    }
-    p { margin: 1em 0; }
-    ul, ol { margin-left: 2em; }
-    body:has(#notes:not(:empty)) {
-      padding-right: 1em;
-    }
-    @media (max-width: 90ch) {
-      body:has(#notes:not(:empty)) {
-        padding-right: 0em;
-        &>svg {
-          display: none;
-        }
-        #sidebar {
-          max-width: unset;
-        }
-      }
-    }
-    #controls {
-      font-size: 2em;
-      padding: 1rem;
-      border-radius: 14pt;
-      border: 3px solid #94e2d5;
-      display: flex;
-      justify-content: space-between;
-      gap: 1em;
-      & div {
+      body {
         display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background: #1e1e2e;
+      }
+      body.book-mode {
+        flex-wrap: wrap;
         gap: 1em;
       }
-      & button {
-        border: none;
-        background: transparent;
+      svg {
+        width: 100%;
+        height: unset;
+        max-height: 100vh;
+        display: none;
       }
-      & svg {
-        width: 2rem;
-        height: 2rem;
+      body.book-mode svg {
+        height: 100dvh;
+        width: unset;
         display: block;
-        stroke: #cdd6f4;
       }
-    }
-  </style>
-  <link rel="stylesheet" href="theme.css">
-</head>
-<body>
-<div id="sidebar">
-  <main id="notes"></main>
-  <div id="controls">
-    <button id="prev">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left-icon lucide-arrow-left"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
-    </button>
-
-    <span id="timer"></span>
-
-    <div>
-      <button id="full">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-fullscreen-icon lucide-fullscreen"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect width="10" height="8" x="7" y="8" rx="1"/></svg>
-      </button>
-      <button id="next">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right-icon lucide-arrow-right"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-      </button>
-    </div>
-  </div>
-</div>
-INSERT_SVG_HERE
-<script>
-const slides = document.querySelectorAll("body>svg")
-let lastIntervalId = 0
-
-const channel = new BroadcastChannel("control")
-channel.addEventListener("message", ({data: idx}) => showSlide(idx, true))
-
-const notes = document.getElementById("notes")
-const noteBlocks = Array.from(slides)
-    .map(findNotes)
-if (noteBlocks.filter(Boolean).length > 0) {
-  noteBlocks
-    .map(wrapNotes)
-    .forEach(el => notes.appendChild(el))
-} else {
-  document.body.classList.add("book-mode")
-  document.querySelectorAll("video").forEach(video => {
-      video.setAttribute("controls", "true")
-  })
-}
-
-const timer = document.getElementById("timer")
-
-let currentSlide = 0
-showSlide(currentSlide)
-
-function findNotes(parent) {
-    return Array.from(parent.querySelectorAll("[data-typst-label]"))
-        .filter(element => element.dataset.typstLabel)
-        .filter(element => element.dataset.typstLabel.startsWith("note://"))
-        .map(element => element.dataset.typstLabel.replace("note://", ""))
-        .join("\n")
-}
-
-function wrapNotes(note, slideIdx) {
-    const container = document.createElement("div")
-    container.innerHTML = note || "<p></p>"
-    const heading = document.createElement("h2")
-    heading.textContent = "Slide " + slideIdx
-    heading.id = "notes" + slideIdx
-    heading.classList.add("note-title")
-    container.prepend(heading)
-    return container
-}
-
-document.querySelectorAll("a").forEach(el => el.addEventListener("click", (event) => {
-    event.stopPropagation()
-}))
-document.getElementById("full").onclick = fullscreen
-document.getElementById("next").onclick = nextSlide
-document.getElementById("prev").onclick = prevSlide
-document.addEventListener("keydown", (event) => {
-    const actions = {
-        ArrowRight: nextSlide,
-        ArrowDown: nextSlide,
-        ArrowLeft: prevSlide,
-        ArrowUp: prevSlide,
-        Home: firstSlide,
-        End: lastSlide,
-        f: fullscreen,
-    }
-
-    actions[event.key]()
-})
-
-function fullscreen() {
-    document.body.requestFullscreen()
-    document.getElementById("notes").innerHTML = ""
-    firstSlide()
-}
-
-function firstSlide() { showSlide(0) }
-function lastSlide() { showSlide(slides.length - 1) }
-
-function nextSlide() {
-    if (currentSlide + 1 === slides.length) {
-        firstSlide()
-    } else {
-        showSlide(currentSlide + 1)
-    }
-}
-
-function prevSlide() {
-    if (currentSlide === 0) {
-        lastSlide()
-    } else {
-        showSlide(currentSlide - 1)
-    }
-}
-
-function showAll() {
-    slides.forEach((slide) => {
-        slide.classList.add("visible")
-    })
-}
-
-function showSlide(idx, quiet = false) {
-    if (idx === 0) {
-        createTimer()
-    }
-
-    document.querySelectorAll(".note-title").forEach(el => el.classList.remove("highlight"))
-    document.getElementById("notes"+idx)?.classList.add("highlight")
-    console.log("notes"+idx, document.getElementById("notes"+idx))
-    currentSlide = idx
-    slides.forEach((slide, currentIdx) => {
-        let videos = Array.from(slide.querySelectorAll("video"))
-        if (currentIdx !== idx) {
-            slide.classList.remove("visible")
-            videos.forEach(video => {
-                video.pause()
-                requestAnimationFrame(() => video.currentTime = 0)
-            })
-        } else {
-            slide.classList.add("visible")
-            videos.forEach(video => video.play())
+      @media (min-aspect-ratio: 16/9) {
+        svg {
+          width: unset;
+          height: 100dvh;
         }
-    })
-    if (!quiet) {
-        channel.postMessage(idx)
-    }
-    document.dispatchEvent(new Event("slideswitched"))
-}
+      }
+      svg.visible {
+        display: block;
+      }
+      video,
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+      }
+      #sidebar {
+        box-sizing: border-box;
+        grid-template-rows: 1fr auto;
+        height: 100dvh;
+        max-width: 50ch;
+        font: 16px monospace;
+        color: #cdd6f4;
+        display: none;
+        padding: 1em;
+        gap: 1em;
+        &:has(#notes:not(:empty)) {
+          display: grid;
+        }
+      }
+      #notes {
+        overflow-y: auto;
+        scrollbar-color: #cdd6f4 transparent;
+        padding: 1rem;
+        &:empty {
+          padding: 0rem;
+        }
+      }
+      .highlight {
+        color: #94e2d5;
+      }
+      h2 {
+        font-weight: normal;
+        font-size: 1.2em;
+      }
+      a {
+        color: #94e2d5;
+      }
+      em {
+        color: #94e2d5;
+      }
+      strong {
+        font-weight: normal;
+        color: #94e2d5;
+      }
+      p {
+        margin: 1em 0;
+      }
+      ul,
+      ol {
+        margin-left: 2em;
+      }
+      body:has(#notes:not(:empty)) {
+        padding-right: 1em;
+      }
+      @media (max-width: 90ch) {
+        body:has(#notes:not(:empty)) {
+          padding-right: 0em;
+          & > svg {
+            display: none;
+          }
+          #sidebar {
+            max-width: unset;
+          }
+        }
+      }
+      #controls {
+        font-size: 2em;
+        padding: 1rem;
+        border-radius: 14pt;
+        border: 3px solid #94e2d5;
+        display: flex;
+        justify-content: space-between;
+        gap: 1em;
+        & div {
+          display: flex;
+          gap: 1em;
+        }
+        & button {
+          border: none;
+          background: transparent;
+        }
+        & svg {
+          width: 2rem;
+          height: 2rem;
+          display: block;
+          stroke: #cdd6f4;
+        }
+      }
+    </style>
+    <link rel="stylesheet" href="theme.css" />
+  </head>
+  <body>
+    <div id="sidebar">
+      <main id="notes"></main>
+      <div id="controls">
+        <button id="prev">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-arrow-left-icon lucide-arrow-left"
+          >
+            <path d="m12 19-7-7 7-7" />
+            <path d="M19 12H5" />
+          </svg>
+        </button>
 
-function createTimer() {
-    const started = new Date()
-    const timer = document.getElementById("timer")
+        <span id="timer"></span>
 
-    clearInterval(lastIntervalId)
-    timer.textContent = "00:00"
+        <div>
+          <button id="full">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-fullscreen-icon lucide-fullscreen"
+            >
+              <path d="M3 7V5a2 2 0 0 1 2-2h2" />
+              <path d="M17 3h2a2 2 0 0 1 2 2v2" />
+              <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
+              <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
+              <rect width="10" height="8" x="7" y="8" rx="1" />
+            </svg>
+          </button>
+          <button id="next">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-arrow-right-icon lucide-arrow-right"
+            >
+              <path d="M5 12h14" />
+              <path d="m12 5 7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    INSERT_SVG_HERE
+    <script>
+      const slides = document.querySelectorAll("body>svg");
+      let lastIntervalId = 0;
 
-    lastIntervalId = setInterval(() => {
-        const seconds = (new Date() - started) / 1000
-        timer.textContent = prettifyNumber(seconds / 60) + ":" + prettifyNumber(seconds % 60)
-    }, 1000)
-}
+      const channel = new BroadcastChannel("control");
+      channel.addEventListener("message", ({ data: idx }) =>
+        showSlide(idx, true),
+      );
 
-function prettifyNumber(x) {
-    if (x > 100) {
-        return Math.floor(x)
-    }
+      const notes = document.getElementById("notes");
+      const noteBlocks = Array.from(slides).map(findNotes);
+      if (noteBlocks.filter(Boolean).length > 0) {
+        noteBlocks.map(wrapNotes).forEach((el) => notes.appendChild(el));
+      } else {
+        document.body.classList.add("book-mode");
+        document.querySelectorAll("video").forEach((video) => {
+          video.setAttribute("controls", "true");
+        });
+      }
 
-    return ('00' + Math.floor(x)).slice(-2)
-}
-</script>
-</body>
+      const timer = document.getElementById("timer");
+
+      let currentSlide = 0;
+      showSlide(currentSlide);
+
+      function findNotes(parent) {
+        return Array.from(parent.querySelectorAll("[data-typst-label]"))
+          .filter((element) => element.dataset.typstLabel)
+          .filter((element) => element.dataset.typstLabel.startsWith("note://"))
+          .map((element) => element.dataset.typstLabel.replace("note://", ""))
+          .join("\n");
+      }
+
+      function wrapNotes(note, slideIdx) {
+        const container = document.createElement("div");
+        container.innerHTML = note || "<p></p>";
+        const heading = document.createElement("h2");
+        heading.textContent = "Slide " + slideIdx;
+        heading.id = "notes" + slideIdx;
+        heading.classList.add("note-title");
+        container.prepend(heading);
+        return container;
+      }
+
+      document.querySelectorAll("a").forEach((el) =>
+        el.addEventListener("click", (event) => {
+          event.stopPropagation();
+        }),
+      );
+      document.getElementById("full").onclick = fullscreen;
+      document.getElementById("next").onclick = nextSlide;
+      document.getElementById("prev").onclick = prevSlide;
+      document.addEventListener("keydown", (event) => {
+        const actions = {
+          ArrowRight: nextSlide,
+          ArrowDown: nextSlide,
+          ArrowLeft: prevSlide,
+          ArrowUp: prevSlide,
+          Home: firstSlide,
+          End: lastSlide,
+          f: fullscreen,
+        };
+
+        actions[event.key]();
+      });
+
+      function fullscreen() {
+        document.body.requestFullscreen();
+        document.getElementById("notes").innerHTML = "";
+        firstSlide();
+      }
+
+      function firstSlide() {
+        showSlide(0);
+      }
+      function lastSlide() {
+        showSlide(slides.length - 1);
+      }
+
+      function nextSlide() {
+        if (currentSlide + 1 === slides.length) {
+          firstSlide();
+        } else {
+          showSlide(currentSlide + 1);
+        }
+      }
+
+      function prevSlide() {
+        if (currentSlide === 0) {
+          lastSlide();
+        } else {
+          showSlide(currentSlide - 1);
+        }
+      }
+
+      function showAll() {
+        slides.forEach((slide) => {
+          slide.classList.add("visible");
+        });
+      }
+
+      function showSlide(idx, quiet = false) {
+        if (idx === 0) {
+          createTimer();
+        }
+
+        document
+          .querySelectorAll(".note-title")
+          .forEach((el) => el.classList.remove("highlight"));
+        document.getElementById("notes" + idx)?.classList.add("highlight");
+        console.log("notes" + idx, document.getElementById("notes" + idx));
+        currentSlide = idx;
+        slides.forEach((slide, currentIdx) => {
+          let videos = Array.from(slide.querySelectorAll("video"));
+          if (currentIdx !== idx) {
+            slide.classList.remove("visible");
+            videos.forEach((video) => {
+              video.pause();
+              requestAnimationFrame(() => (video.currentTime = 0));
+            });
+          } else {
+            slide.classList.add("visible");
+            videos.forEach((video) => video.play());
+          }
+        });
+        if (!quiet) {
+          channel.postMessage(idx);
+        }
+        document.dispatchEvent(new Event("slideswitched"));
+      }
+
+      function createTimer() {
+        const started = new Date();
+        const timer = document.getElementById("timer");
+
+        clearInterval(lastIntervalId);
+        timer.textContent = "00:00";
+
+        lastIntervalId = setInterval(() => {
+          const seconds = (new Date() - started) / 1000;
+          timer.textContent =
+            prettifyNumber(seconds / 60) + ":" + prettifyNumber(seconds % 60);
+        }, 1000);
+      }
+
+      function prettifyNumber(x) {
+        if (x > 100) {
+          return Math.floor(x);
+        }
+
+        return ("00" + Math.floor(x)).slice(-2);
+      }
+    </script>
+  </body>
 </html>
