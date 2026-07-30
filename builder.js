@@ -69,14 +69,15 @@ function createVideos(root) {
 
 function createImages(root) {
     Array.from(root.querySelectorAll("[data-typst-label]"))
-        .filter(element => element.dataset.typstLabel?.startsWith("img://"))
+        .filter(element => element.dataset.typstLabel?.startsWith("img"))
         .map(parent => {
-            const url = parent.dataset.typstLabel.replace("img://", "")
+            const [metadata, url] = parent.dataset.typstLabel.split("://")
             const anchor = parent.querySelector(".typst-shape")
             const rectShape = anchor.attributes.getNamedItem("d").value.split(" ")
             const height = rectShape.at(3)
             const width = rectShape.at(5)
-            parent.innerHTML = `<foreignObject width="${width}" height="${height}"><img src="${url}" /></foreignObject>`
+            const [_img, fit] = metadata.split("-")
+            parent.innerHTML = `<foreignObject width="${width}" height="${height}"><img src="${url}" style="object-fit: ${fit}" /></foreignObject>`
         })
 }
 

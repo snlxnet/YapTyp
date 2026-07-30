@@ -1,1 +1,1 @@
-#import "yap.typ": img as image, video, notes, use-local
+#import "yap.typ": img, video, notes, use-local

@@ -6,6 +6,17 @@
 /// Speaker notes for the current page.
 /// Intended for presentations.
 /// Show up on the left in the viewer.
+///
+/// ```example
+/// #notes[
+///   One thing about speaker notes is that they flip the document
+///   into presentation mode.
+///
+///   So if you add one, the whole document is switched.
+///   Book mode is when pages are displayed either vertically
+///   or in a grid, each one taking up 100% of the screen vertically.
+/// ]
+/// ```
 #let notes(
   /// The text of the note.
   /// You can only use
@@ -123,12 +134,20 @@
   [#box(fill: rgb("12345678"), width: width, align(center+horizon, placeholder))#label("vid://" + source)]
 }
 
-// fit missing!
-#let _optimized-img(..args) = [#box(fill: rgb("12345678"), hide(image(..args)))#label("img://" + args.pos().at(0))]
-
 /// An external image.
 /// Typst's default `#image`'s
 /// are embedded into the SVG, resulting in large file sizes, which
 /// can be a problem if used in a website.
-/// YapTyp's `#image` is a drop-in replacement that loads them separately.
-#let image(..args) = _optimized-img(..args)
+/// YapTyp's `#img` loads them separately.
+#let img(
+  /// -> path
+  source,
+  /// -> auto | relative
+  width: auto,
+  /// -> auto | relative
+  height: auto,
+  /// "cover" or "contain"
+  /// -> str
+  fit: "cover",
+) = [#box(fill: rgb("12345678"), hide(image(source, width: width, height: height, fit: fit)))#label("img-" + fit + "://" + source)]
+

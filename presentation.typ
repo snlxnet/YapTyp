@@ -1,4 +1,4 @@
-#import "./lib.typ": video, image, notes
+#import "./lib.typ": video, img, notes
 
 #set page(paper: "presentation-16-9")
 #set text(size: 24pt)
@@ -21,11 +21,19 @@ Noteless slide
 
 #pagebreak()
 
-Not embedded image
-#image("yap.svg")
+#image("yap.svg", width: 8cm, height: 5cm, fit: "contain")
+#img("yap.svg", width: 8cm, height: 5cm, fit: "contain")
 #notes[
   Slide two speaker notes
 ]
 
 #pagebreak()
 Second noteless slide
+
+#video(
+  "https://weldlab.github.io/video/omni.mp4",
+  aspect-ratio: "1.3333",
+  width: 50%,
+  height: 50%
+)
+
