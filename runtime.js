@@ -2,47 +2,24 @@ let slides = []
 let currentSlide = 0;
 let lastIntervalId = 0;
 
-load()
-
-async function load() {
-  slides.forEach(slide => slide.remove())
-  let idx = 1;
-
-  while (true) {
-    const response = await fetch(`/slide${idx}.svg`, { cache: "no-cache" }).catch(() => false)
-    if (!response || response.status > 299) break;
-    document.body.innerHTML += await response.text()
-    idx++
-  }
-
-  try {
-    updateSlides()
-  } catch(e) {
-    console.error(e)
-  }
-}
-
-function updateSlides() {
-  slides = document.querySelectorAll("body>svg");
-
-  createVideos(document.body);
-  createImages(document.body);
-
-  updateDisplayMode()
-  showSlide(currentSlide)
-
-  extend()
-}
-
-//////////////////////////////////////////
-
 const channel = new BroadcastChannel("control");
 channel.addEventListener("message", ({ data: idx }) =>
   showSlide(idx, true),
 );
+reload()
+
+//////////////////////////////////////////
+
+function reload() {
+  slides = document.querySelectorAll("body>svg");
+
+  updateDisplayMode()
+  showSlide(currentSlide)
+}
 
 function updateDisplayMode() {
   const notes = document.getElementById("notes");
+  notes.innerHTML = ""
   const noteBlocks = Array.from(slides).map(findNotes);
 
   if (noteBlocks.filter(Boolean).length > 0) {

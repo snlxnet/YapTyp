@@ -1,3 +1,24 @@
+load()
+
+async function load() {
+  slides.forEach(slide => slide.remove())
+  let idx = 1;
+
+  while (true) {
+    const response = await fetch(`/slide${idx}.svg`, { cache: "no-cache" }).catch(() => false)
+    if (!response || response.status > 299) break;
+    document.body.innerHTML += await response.text()
+    idx++
+  }
+
+  try {
+    reload()
+    extend()
+  } catch(e) {
+    console.error(e)
+  }
+}
+
 function extend() {
   const button = document.querySelector('[data-typst-label="button"]')
 
@@ -41,6 +62,7 @@ async function onFileSelect(event) {
 
   createVideos(document.body);
   createImages(document.body);
+  reload()
 
   const template = await fetch("template").then((res) => res.text());
   const generated = template.replace("INSERT_SVG_HERE", body.innerHTML);

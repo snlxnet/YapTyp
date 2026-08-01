@@ -4,7 +4,7 @@ function createVideos(root) {
     .map((anchor) => {
       const video = document.createElement("video");
       const fill = anchor.querySelector(".typst-shape")
-      fill.remove()
+      fill?.remove()
       const image = anchor.querySelector("image");
       if (!image) {
         console.error("Failed to create video", anchor);
