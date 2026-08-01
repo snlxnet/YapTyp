@@ -30,15 +30,17 @@ async function onFileSelect(event) {
     return;
   }
 
-  const body = document.createElement("div");
+  const oldSlides = document.querySelectorAll("body>svg");
+  oldSlides.forEach(slide => slide.remove())
+
   if (files[0].type.includes("zip")) {
-    body.innerHTML = await readZip(files[0]);
+    document.body.innerHTML += await readZip(files[0]);
   } else {
-    body.innerHTML = await readSvgArray(files);
+    document.body.innerHTML += await readSvgArray(files);
   }
 
-  createVideos(body);
-  createImages(body);
+  createVideos(document.body);
+  createImages(document.body);
 
   const template = await fetch("template").then((res) => res.text());
   const generated = template.replace("INSERT_SVG_HERE", body.innerHTML);

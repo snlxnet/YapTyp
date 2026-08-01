@@ -1,5 +1,7 @@
 let slides = []
 let currentSlide = 0;
+let lastIntervalId = 0;
+
 load()
 
 async function load() {
@@ -15,20 +17,24 @@ async function load() {
 
   try {
     updateSlides()
-  } catch {}
+  } catch(e) {
+    console.error(e)
+  }
 }
 
 function updateSlides() {
   slides = document.querySelectorAll("body>svg");
 
+  createVideos(document.body);
+  createImages(document.body);
+
   updateDisplayMode()
   showSlide(currentSlide)
+
   extend()
 }
 
 //////////////////////////////////////////
-
-let lastIntervalId = 0;
 
 const channel = new BroadcastChannel("control");
 channel.addEventListener("message", ({ data: idx }) =>
