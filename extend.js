@@ -1,15 +1,30 @@
 function extend() {
   const button = document.querySelector('[data-typst-label="button"]')
-  button.style.cursor = "pointer"
 
-  createVideos(document.body);
-  createImages(body);
+  const input = document.createElement("input");
+  input.type = "file"
+  input.setAttribute("multiple", "true")
+  input.style.display = "none"
+
+  const label = document.createElement("label");
+  label.appendChild(input)
+  label.style.display = "block";
+  label.style.width = "100%";
+  label.style.height = "100%";
+  label.style.cursor = "pointer"
+
+  const foreign = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject")
+  button.appendChild(foreign)
+  foreign.appendChild(label)
+  foreign.setAttribute("width", "100%");
+  foreign.setAttribute("height", "100%");
+
+  input.addEventListener("input", onFileSelect)
 }
 
-const fileList = document.getElementById("source-files");
-
-fileList.oninput = async () => {
-  const files = Array.from(fileList.files || []);
+async function onFileSelect(event) {
+  const files = Array.from(event.target.files || []);
+  console.log(event.target)
 
   if (!files.length) {
     return;
@@ -58,4 +73,3 @@ function download(text) {
   element.setAttribute("download", "player.html");
   element.click();
 }
-
