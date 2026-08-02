@@ -17,6 +17,8 @@ async function load() {
   } catch(e) {
     console.error(e)
   }
+
+  document.getElementById("save").onclick = download
 }
 
 function extend() {
@@ -63,11 +65,6 @@ async function onFileSelect(event) {
   createVideos(document.body);
   createImages(document.body);
   reload()
-
-  const template = await fetch("template").then((res) => res.text());
-  const generated = template.replace("INSERT_SVG_HERE", body.innerHTML);
-
-  download(generated);
 };
 
 async function readSvgArray(files) {
@@ -88,12 +85,32 @@ async function readZip(file) {
   return body;
 }
 
-function download(text) {
+function download() {
+  document.getElementById("save").style.display = "none"
+  reload()
+  firstSlide()
+
+  const html = Array.from(document.children).map(child => child.innerHTML).join("\n")
+
   const element = document.createElement("a");
   element.setAttribute(
     "href",
-    "data:text/plain;charset=utf-8," + encodeURIComponent(text),
+    "data:text/html;charset=utf-8," + encodeURIComponent(html),
   );
   element.setAttribute("download", "player.html");
   element.click();
+
+  document.getElementById("save").style.display = null
+}
+
+async function observeDirectory() {
+  const directoryHandle = await window.showDirectoryPicker();
+
+  const observer = new FileSystemObserver(([event]) => {
+    if (event.type !== "modified") {
+      return
+    }
+    console.log("reload")
+  });
+  await observer.observe(directoryHandle);
 }
