@@ -65,6 +65,13 @@ function fullscreen() {
   firstSlide();
 }
 
+document.body.addEventListener("fullscreenchange", () => {
+  if (document.fullscreenElement) {
+    return
+  }
+  reload()
+})
+
 function firstSlide() {
   showSlide(0);
 }
