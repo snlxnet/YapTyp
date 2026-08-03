@@ -12,8 +12,6 @@ window.addEventListener("load", () => {
   );
 })
 
-//////////////////////////////////////////
-
 function reload() {
   slides = document.querySelectorAll("body>svg");
 
@@ -170,7 +168,6 @@ function wrapNotes(note, slideIdx) {
   container.prepend(heading);
   return container;
 }
-
 
 function createTimer() {
   const started = new Date();

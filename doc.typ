@@ -41,27 +41,6 @@
   }),
 )
 
-/*
-#notes[
-  Slide one speaker notes
-]
-#pagebreak()
-
-= This is a presentation example
-\<- Speaker notes\
-And this is the actual slide
-
-If you don't know what Typst is,
-#link("https://typst.app", underline[check it out])
-
-#notes[
-  Yap is a Typst package
-  that adds video and speaker note support.
-]
-
-#pagebreak()
-*/
-
 #set align(center)
 #text(size: 24pt)[Browser-optimized paged export]\
 #v(2mm)
@@ -169,6 +148,8 @@ Yap's functionality can be easily extended:
     #box(stroke: teal)<input>
   ]
 )
+
+You can also create `theme.css` which will be auto linked.
 
 #pagebreak()
 #notes[Typst API]
