@@ -10,17 +10,27 @@ with videos, speaker notes, and custom elements.
 #notes[Speaker notes]
 ```
 
-See [the demo presentation](https://yap.snlx.net).
+If you're using the [Typst web app](https://typst.app),
+export as SVG, you'll get a zip.
+If you're using the local compiler,
+run `typst watch main.typ main{p}.svg`.
 
-Then:
+Go to the [yap webapp](https://yap.snlx.net)
+and select the exported zip or the project folder
+(folders are auto-reloaded when the content changes).
+You can also find more usage examples and the full API spec there.
 
-- If you're using the [Typst web app](https://typst.app),
-  export as SVG and select the zip file
-- If you're using the local compiler with Firefox or Safari,
-  select the individual SVGs using the same button
-- If you're using the local compiler with Chromium,
-  run `typst watch main.typ main{p}.svg` select the folder
-  with the sources and the SVGs
+When you're done, press `enter` in the viewer to save the document to disk.
+
+## Extending
+
+There are 2 files to play with:
+- `theme.css` if you want to change how the viewer looks
+- `extend.js` if you need custom behavior
+
+You can create `box`es or `block`s with `<labels>` from within typst
+and then get them as though they are HTML divs using the `getTypstLabel("label")`
+function in `extend.js`.
 
 ## Background
 
@@ -28,3 +38,7 @@ YapTyp was initially built for a talk at my uni
 because different versions of PowerPoint and LibreOffice
 handle videos and speaker notes differently and don't play together,
 but the browser is the same-ish everywhere.
+
+Then someone I know (non-programmer) needed a way
+to make something like a PDF but with embedded videos.
+Typst looks like a perfect fit for that, except... No video support.
