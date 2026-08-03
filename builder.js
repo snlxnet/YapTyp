@@ -23,6 +23,8 @@ async function load() {
       download()
     }
   })
+
+  document.querySelector('script[src="builder.js"]').remove()
 }
 
 function extend() {
