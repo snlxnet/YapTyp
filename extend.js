@@ -26,8 +26,6 @@ async function load() {
 }
 
 function extend() {
-  const zipButton = document.querySelector('[data-typst-label="zip"]')
-
   const input = document.createElement("input");
   input.type = "file"
   input.setAttribute("multiple", "true")
@@ -36,34 +34,44 @@ function extend() {
   const label = document.createElement("label");
   label.appendChild(input)
   label.style.display = "block";
-  label.style.width = "100%";
-  label.style.height = "100%";
   label.style.cursor = "pointer"
+  getTypstLabel("zip").appendChild(label)
 
-  const zipForeign = createForeign()
-  zipButton.appendChild(zipForeign)
-  zipForeign.appendChild(label)
+  const dirButton = document.createElement("button")
+  dirButton.style.opacity = "0";
+  getTypstLabel("dir").appendChild(dirButton)
 
-  const dirButton = document.querySelector('[data-typst-label="dir"]')
-
-  const button = document.createElement("button")
-  button.style.width = "100%";
-  button.style.height = "100%";
-  button.style.opacity = "0";
-
-  const dirForeign = createForeign()
-  dirButton.appendChild(dirForeign)
-  dirForeign.appendChild(button)
+  const bookButton = document.createElement("button")
+  dirButton.style.opacity = "0";
+  getTypstLabel("book").appendChild(bookButton)
 
   input.addEventListener("input", onFileSelect)
-  button.addEventListener("click", observeDirectory)
+  dirButton.addEventListener("click", observeDirectory)
+  bookButton.addEventListener("click", toggleBook)
 }
 
-function createForeign() {
+function getTypstLabel(label) {
+  const anchor = document.querySelector(`[data-typst-label="${label}"]`)
+  const existing = anchor.querySelector("foreignObject")
+
+  if (existing) {
+    return existing
+  }
+
+  const size = anchor.getBBox()
+
   const foreign = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject")
-  foreign.setAttribute("width", "100%");
-  foreign.setAttribute("height", "100%");
+  foreign.setAttribute("width", size.width);
+  foreign.setAttribute("height", size.height);
+
+  anchor.appendChild(foreign)
+
   return foreign
+}
+
+function toggleBook() {
+  console.log('book')
+  document.body.classList.toggle("book-mode")
 }
 
 async function onFileSelect(event) {
@@ -136,9 +144,6 @@ async function observeDirectory() {
   }
 
   const observer = new FileSystemObserver(([event]) => {
-    if (event.type !== "modified") {
-      return
-    }
     showCurrent()
   });
   await observer.observe(root);
