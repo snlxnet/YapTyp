@@ -1,33 +1,31 @@
-const SLIDE_WORD = navigator.language.includes("ru") ? "Слайд" : "Slide"
+const SLIDE_WORD = navigator.language.includes("ru") ? "Слайд" : "Slide";
 
-let slides = []
+let slides = [];
 let currentSlide = 0;
 let lastIntervalId = 0;
 
 const channel = new BroadcastChannel("control");
 window.addEventListener("load", () => {
-  reload()
-  channel.addEventListener("message", ({ data: idx }) =>
-    showSlide(idx, true),
-  );
-})
+  reload();
+  channel.addEventListener("message", ({ data: idx }) => showSlide(idx, true));
+});
 
 function reload() {
   slides = document.querySelectorAll("body>svg");
 
-  updateDisplayMode()
+  updateDisplayMode();
   try {
     createVideos(document.body);
     createImages(document.body);
   } catch (e) {
-    console.log("Images and videos appear to alerady be in place")
+    console.log("Images and videos appear to alerady be in place");
   }
-  showSlide(currentSlide)
+  showSlide(currentSlide);
 }
 
 function updateDisplayMode() {
   const notes = document.getElementById("notes");
-  notes.innerHTML = ""
+  notes.innerHTML = "";
   const noteBlocks = Array.from(slides).map(findNotes);
 
   if (noteBlocks.filter(Boolean).length > 0) {
@@ -75,10 +73,10 @@ function fullscreen() {
 
 document.body.addEventListener("fullscreenchange", () => {
   if (document.fullscreenElement) {
-    return
+    return;
   }
-  reload()
-})
+  reload();
+});
 
 function firstSlide() {
   showSlide(0);
@@ -88,7 +86,7 @@ function lastSlide() {
 }
 
 function nextSlide() {
-  console.log(currentSlide, slides.length, slides)
+  console.log(currentSlide, slides.length, slides);
   if (currentSlide + 1 === slides.length) {
     firstSlide();
   } else {
@@ -133,15 +131,15 @@ function showSlide(idx, quiet = false) {
       });
     } else {
       slide.classList.add("visible");
-      slide.querySelectorAll("foreignObject").forEach(foreign => {
-        const size = foreign.parentElement.getBBox()
+      slide.querySelectorAll("foreignObject").forEach((foreign) => {
+        const size = foreign.parentElement.getBBox();
         foreign.setAttribute("width", size.width);
         foreign.setAttribute("height", size.height);
-      })
+      });
       try {
         videos.forEach((video) => video.play());
       } catch (e) {
-        console.error(e)
+        console.error(e);
       }
     }
   });
@@ -162,7 +160,7 @@ function wrapNotes(note, slideIdx) {
   const container = document.createElement("div");
   container.innerHTML = note || "<p></p>";
   const heading = document.createElement("h2");
-  heading.textContent = `${SLIDE_WORD} ${slideIdx+1}`;
+  heading.textContent = `${SLIDE_WORD} ${slideIdx + 1}`;
   heading.id = "notes" + slideIdx;
   heading.classList.add("note-title");
   container.prepend(heading);
@@ -196,8 +194,8 @@ function createVideos(root) {
     .filter((element) => element.dataset.typstLabel?.startsWith("vid://"))
     .map((anchor) => {
       const video = document.createElement("video");
-      const fill = anchor.querySelector(".typst-shape")
-      fill?.remove()
+      const fill = anchor.querySelector(".typst-shape");
+      fill?.remove();
       const image = anchor.querySelector("image");
       if (!image) {
         console.error("Failed to create video", anchor);
@@ -230,16 +228,18 @@ function createImages(root) {
 }
 
 function getTypstLabel(label) {
-  const anchor = document.querySelector(`[data-typst-label="${label}"]`)
-  const existing = anchor.querySelector("foreignObject")
+  const anchor = document.querySelector(`[data-typst-label="${label}"]`);
+  const existing = anchor.querySelector("foreignObject");
 
   if (existing) {
-    return existing
+    return existing;
   }
 
-  const foreign = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject")
-  anchor.appendChild(foreign)
+  const foreign = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "foreignObject",
+  );
+  anchor.appendChild(foreign);
 
-  return foreign
+  return foreign;
 }
-

@@ -1,34 +1,30 @@
-# YapTyp
+Browser-optimized paged export for Typst
+with videos, speaker notes, and custom elements.
 
-[![banner](./yaptyp.svg)](https://yap.snlx.net)
-
-Browser-optimized paged export for Typst.
-
-Add videos and interactive speaker notes to your Typst documents.
-
-## Writing the document
+## Usage
 
 ```typst
 #import "@preview/yap:0.1.0": video, notes
 
 #video("example.mp4")
-#notes[Notes enable presentation mode]
+#notes[Speaker notes]
 ```
 
-[Full documentation](https://yap.snlx.net/doc.pdf)
+See [the demo presentation](https://yap.snlx.net).
 
-## Hydrating
+Then:
 
 - If you're using the [Typst web app](https://typst.app),
-  export as SVG and select the zip file on https://yap.snlx.net
-- If you're using the local compiler, select the individual SVGs
+  export as SVG and select the zip file
+- If you're using the local compiler with Firefox or Safari,
+  select the individual SVGs using the same button
+- If you're using the local compiler with Chromium,
+  run `typst watch main.typ main{p}.svg` select the folder
+  with the sources and the SVGs
 
 ## Background
 
-YapTyp was initially built for my talk at the uni.
-The idea was that different versions of PowerPoint and LibreOffice
-handle videos and speaker notes differently, but the browser is the same everywhere.
-
-It works by inserting `<labels>` into the SVG,
-then reading them and replacing the elements that have them
-with `<foreignElement>`.
+YapTyp was initially built for a talk at my uni
+because different versions of PowerPoint and LibreOffice
+handle videos and speaker notes differently and don't play together,
+but the browser is the same-ish everywhere.
