@@ -169,9 +169,9 @@ function wrapNotes(note, slideIdx) {
 
 function createTimer() {
   const started = new Date();
-  const timer = document.getElementById("timer");
 
   clearInterval(lastIntervalId);
+  // implicit getElementById
   timer.textContent = "00:00";
 
   lastIntervalId = setInterval(() => {

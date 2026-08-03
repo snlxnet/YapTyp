@@ -1,10 +1,7 @@
 extend();
 
 function extend() {
-  const bookButton = document.createElement("button");
-  bookButton.style.opacity = "0";
-  getTypstLabel("book").appendChild(bookButton);
-  bookButton.addEventListener("click", toggleBook);
+  getTypstLabel("book").onclick = toggleBook;
 
   getTypstLabel("say-hi").onclick = () => alert("hi");
 
@@ -14,5 +11,15 @@ function extend() {
 }
 
 function toggleBook() {
-  document.body.classList.toggle("book-mode");
+  const book = document.body.classList.toggle("book-mode");
+  console.log(book)
+
+  if (book) {
+    document.body.innerHTML = document.body.innerHTML.replaceAll("note://", "not-a-note://")
+  } else {
+    document.body.innerHTML = document.body.innerHTML.replaceAll("not-a-note://", "note://")
+  }
+
+  reload()
+  getTypstLabel("book").onclick = toggleBook;
 }
