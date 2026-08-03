@@ -42,12 +42,14 @@ function extend() {
   getTypstLabel("dir").appendChild(dirButton)
 
   const bookButton = document.createElement("button")
-  dirButton.style.opacity = "0";
+  bookButton.style.opacity = "0";
   getTypstLabel("book").appendChild(bookButton)
 
   input.addEventListener("input", onFileSelect)
   dirButton.addEventListener("click", observeDirectory)
   bookButton.addEventListener("click", toggleBook)
+
+  reload()
 }
 
 function getTypstLabel(label) {
@@ -58,19 +60,13 @@ function getTypstLabel(label) {
     return existing
   }
 
-  const size = anchor.getBBox()
-
   const foreign = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject")
-  foreign.setAttribute("width", size.width);
-  foreign.setAttribute("height", size.height);
-
   anchor.appendChild(foreign)
 
   return foreign
 }
 
 function toggleBook() {
-  console.log('book')
   document.body.classList.toggle("book-mode")
 }
 

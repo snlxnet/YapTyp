@@ -60,9 +60,10 @@
         display: none;
         padding: 1em;
         gap: 1em;
-        &:has(#notes:not(:empty)) {
-          display: grid;
-        }
+        display: grid;
+      }
+      .book-mode #sidebar {
+        display: none;
       }
       #notes {
         overflow-y: auto;

@@ -133,13 +133,17 @@ function showSlide(idx, quiet = false) {
       });
     } else {
       slide.classList.add("visible");
+      slide.querySelectorAll("foreignObject").forEach(foreign => {
+        const size = foreign.parentElement.getBBox()
+        foreign.setAttribute("width", size.width);
+        foreign.setAttribute("height", size.height);
+      })
       videos.forEach((video) => video.play());
     }
   });
   if (!quiet) {
     channel.postMessage(idx);
   }
-  document.dispatchEvent(new Event("slideswitched"));
 }
 
 function findNotes(parent) {
