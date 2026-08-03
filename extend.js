@@ -142,7 +142,14 @@ async function observeDirectory() {
     }
   }
 
-  readSvgDirentry(root, prefixes)
+  const oldSlides = document.querySelectorAll("body>svg");
+  oldSlides.forEach(slide => slide.remove())
+
+  document.body.innerHTML += await readSvgDirentry(root, prefixes)
+
+  createVideos(document.body);
+  createImages(document.body);
+  reload()
 }
 
 async function readSvgDirentry(root, prefixes) {
@@ -156,11 +163,14 @@ async function readSvgDirentry(root, prefixes) {
     }
 
     if (prefixes.find(prefix => name.startsWith(prefix))) {
-      pages.push(await entry.getFile().then(f => f.text()))
+      const body = await entry.getFile().then(f => f.text())
+      pages.push({name, body})
     }
   }
 
-  console.log(pages)
+  return pages.sort((a, b) => (
+    a.name.match(/\d+/)[0] - b.name.match(/\d+/)[0]
+  )).map(({body}) => body).join("\n")
 }
 
 async function openFile(root, path) {
