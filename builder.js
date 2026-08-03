@@ -1,26 +1,71 @@
-const fileList = document.getElementById("source-files");
+let extendScriptTimeoutId = -1
+let reloadDirentry = async () => {}
+let updateSlidesToUseDirentry = async () => {}
+load()
 
-fileList.oninput = async () => {
-  const files = Array.from(fileList.files || []);
+async function load() {
+  slides.forEach(slide => slide.remove())
+  let idx = 1;
+
+  while (true) {
+    const response = await fetch(`/slide${idx}.svg`, { cache: "no-cache" }).catch(() => false)
+    if (!response || response.status > 299) break;
+    document.body.innerHTML += await response.text()
+    idx++
+  }
+
+  const input = document.createElement("input");
+  input.type = "file"
+  input.setAttribute("multiple", "true")
+  input.style.display = "none"
+
+  const label = document.createElement("label");
+  label.appendChild(input)
+  label.style.display = "block";
+  label.style.cursor = "pointer"
+  getTypstLabel("zip").appendChild(label)
+
+  const dirButton = document.createElement("button")
+  dirButton.style.opacity = "0";
+  getTypstLabel("dir").appendChild(dirButton)
+
+  input.addEventListener("input", onFileSelect)
+  dirButton.addEventListener("click", observeDirectory)
+
+  reload()
+
+  const extendScript = document.createElement("script")
+  extendScript.id = "extend"
+  extendScript.src = "extend.js"
+  document.body.appendChild(extendScript)
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "d" || event.key === "Enter") {
+      download()
+    }
+  })
+
+  document.querySelector('script[src="builder.js"]').remove()
+}
+
+async function onFileSelect(event) {
+  const files = Array.from(event.target.files || []);
+  console.log(event.target)
 
   if (!files.length) {
     return;
   }
 
-  const body = document.createElement("div");
+  const oldSlides = document.querySelectorAll("body>svg");
+  oldSlides.forEach(slide => slide.remove())
+
   if (files[0].type.includes("zip")) {
-    body.innerHTML = await readZip(files[0]);
+    document.body.innerHTML += await readZip(files[0]);
   } else {
-    body.innerHTML = await readSvgArray(files);
+    document.body.innerHTML += await readSvgArray(files);
   }
 
-  createVideos(body);
-  createImages(body);
-
-  const template = await fetch("template").then((res) => res.text());
-  const generated = template.replace("INSERT_SVG_HERE", body.innerHTML);
-
-  download(generated);
+  reload()
 };
 
 async function readSvgArray(files) {
@@ -41,48 +86,120 @@ async function readZip(file) {
   return body;
 }
 
-function download(text) {
+async function download() {
+  await reloadDirentry()
+  reload()
+  showSlide(0)
+  document.body.innerHTML += '<script id="extend" src="extend.js"></script>'
+
+  const runtime = await fetch("runtime.js").then(res => res.text())
+  const html = Array.from(document.children).map(child => child.innerHTML).join("\n").replace(`<script src="runtime.js"></script>`, `<script>${runtime}</script>`)
+
   const element = document.createElement("a");
   element.setAttribute(
     "href",
-    "data:text/plain;charset=utf-8," + encodeURIComponent(text),
+    "data:text/html;charset=utf-8," + encodeURIComponent(html),
   );
   element.setAttribute("download", "player.html");
   element.click();
+
+  updateSlidesToUseDirentry()
+  reload()
 }
 
-function createVideos(root) {
-  Array.from(root.querySelectorAll("[data-typst-label]"))
-    .filter((element) => element.dataset.typstLabel?.startsWith("vid://"))
-    .map((anchor) => {
-      const video = document.createElement("video");
-      const image = anchor.querySelector("image");
-      if (!image) {
-        console.error("Failed to create video", anchor);
-        return;
-      }
-      const src = anchor.dataset.typstLabel.replace("vid://", "");
-      video.src = src.startsWith("http") ? src : "./" + src;
-      video.loop = true;
-      video.preload = "auto";
-      image.appendChild(video);
-      image.outerHTML =
-        `<foreignObject transform="${image.attributes.transform?.value || ""}" width="${image.attributes.width.value}" height="${image.attributes.height.value}">` +
-        image.innerHTML +
-        `</foreignObject>`;
-    });
+async function observeDirectory() {
+  const root = await window.showDirectoryPicker();
+
+  const prefixes = ["slide", "page"]
+  for await (let entry of root.values()) {
+    if (entry.name.startsWith("yap") || entry.name.startsWith("preview-banner")) continue // DUCT TAPE WARNING
+
+    if (entry.name.endsWith(".typ")) {
+      prefixes.push(entry.name.slice(0, -4))
+    }
+  }
+
+  reloadDirentry = async () => {
+    const oldSlides = document.querySelectorAll("body>svg");
+    oldSlides.forEach(slide => slide.remove())
+
+    document.body.innerHTML += await readSvgDirentry(root, prefixes)
+    document.getElementById("extend")?.remove()
+  }
+  updateSlidesToUseDirentry = () => {
+    clearTimeout(extendScriptTimeoutId)
+    extendScriptTimeoutId = setTimeout(async () => {
+      document.getElementById("extend")?.remove()
+      const extend = document.createElement("script")
+      extend.id = "extend"
+      extend.innerHTML = await openFile(root, "extend.js").then((f) => f.text(), () => "")
+      document.body.appendChild(extend)
+      reload()
+      fixDirentryMedia(root)
+    }, 100)
+  }
+
+  const observer = new FileSystemObserver(async ([event]) => {
+    await reloadDirentry()
+    await updateSlidesToUseDirentry()
+  });
+  await observer.observe(root);
+
+  await reloadDirentry()
+  await updateSlidesToUseDirentry()
 }
 
-function createImages(root) {
-  Array.from(root.querySelectorAll("[data-typst-label]"))
-    .filter((element) => element.dataset.typstLabel?.startsWith("img"))
-    .map((parent) => {
-      const [metadata, url] = parent.dataset.typstLabel.split("://");
-      const anchor = parent.querySelector(".typst-shape");
-      const rectShape = anchor.attributes.getNamedItem("d").value.split(" ");
-      const height = rectShape.at(3);
-      const width = rectShape.at(5);
-      const [_img, fit] = metadata.split("-");
-      parent.innerHTML = `<foreignObject width="${width}" height="${height}"><img src="${url}" style="object-fit: ${fit}" /></foreignObject>`;
-    });
+async function fixDirentryMedia(root) {
+  Array.from(document.querySelectorAll("video"))
+    .filter(video => !video.getAttribute("src").includes("://"))
+    .map(async (video) => {
+      const src = video.getAttribute("src")
+      const file = await openFile(root, src)
+      const url = URL.createObjectURL(file)
+      video.setAttribute("src", url)
+    })
+
+  Array.from(document.querySelectorAll("img"))
+    .map(async (img) => {
+      const src = img.getAttribute("src")
+      const file = await openFile(root, img.getAttribute("src"))
+      const url = URL.createObjectURL(file)
+      img.setAttribute("src", url)
+      img.dataset.originalPath = src
+    })
+}
+
+async function readSvgDirentry(root, prefixes) {
+  const pages = []
+
+  for await (let entry of root.values()) {
+    const name = entry.name
+
+    if (!name.endsWith(".svg")) {
+      continue
+    }
+
+    if (prefixes.find(prefix => name.startsWith(prefix))) {
+      const body = await entry.getFile().then(f => f.text())
+      pages.push({name, body})
+    }
+  }
+
+  return pages.sort((a, b) => (
+    a.name.match(/\d+/)[0] - b.name.match(/\d+/)[0]
+  )).map(({body}) => body).join("\n")
+}
+
+async function openFile(root, path) {
+  const parts = path.replaceAll("./", "").split("/").filter(Boolean)
+
+  if (parts.length === 0) {
+    return
+  } else if (parts.length === 1) {
+    return root.getFileHandle(parts[0]).then(handle => handle.getFile())
+  }
+  console.log('dir', path)
+
+  const lastDir = await parts.slice(0, -1).reduce(async (acc, curr) => await acc.getDirectoryHandle(curr), root)
+  return lastDir.getFileHandle(parts.at(-1)).then(handle => handle.getFile())
 }

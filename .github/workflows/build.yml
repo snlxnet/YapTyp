@@ -21,8 +21,7 @@ jobs:
         uses: actions/configure-pages@v5
       - name: build
         run: |
-          typst compile doc.typ --font-path=.
-          echo todo
+          typst compile doc.typ --font-path=. slide{0p}.svg
       - name: upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

@@ -4,63 +4,200 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light dark" />
-    <title>YapTyp Builder</title>
-    <link rel="stylesheet" href="builder.css" />
-    <script
-      data-theme="catppuccin-mocha"
-      src="https://cdn.jsdelivr.net/npm/@arborium/arborium@1/dist/arborium.iife.js"
-    ></script>
+    <title>YapTyp Player</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background: #1e1e2e;
+      }
+      body::backdrop {
+        display: none;
+      }
+      body.book-mode {
+        flex-wrap: wrap;
+        gap: 1em;
+      }
+      svg {
+        width: 100%;
+        height: unset;
+        max-height: 100vh;
+        display: none;
+      }
+      body.book-mode svg {
+        height: 100dvh;
+        width: unset;
+        display: block;
+      }
+      @media (min-aspect-ratio: 16/9) {
+        svg {
+          width: unset;
+          height: 100dvh;
+        }
+      }
+      svg.visible {
+        display: block;
+      }
+      foreignObject > * {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+      }
+      #sidebar {
+        box-sizing: border-box;
+        grid-template-rows: 1fr auto;
+        height: 100dvh;
+        max-width: 50ch;
+        font: 16px monospace;
+        color: #cdd6f4;
+        display: none;
+        padding: 1em;
+        gap: 1em;
+        display: grid;
+      }
+      .book-mode #sidebar {
+        display: none;
+      }
+      #notes {
+        overflow-y: auto;
+        scrollbar-color: #cdd6f4 transparent;
+        padding: 1rem;
+        &:empty {
+          padding: 0rem;
+        }
+      }
+      .highlight {
+        color: #94e2d5;
+      }
+      h2 {
+        font-weight: normal;
+        font-size: 1.2em;
+      }
+      a {
+        color: #94e2d5;
+      }
+      em {
+        color: #94e2d5;
+      }
+      strong {
+        font-weight: normal;
+        color: #94e2d5;
+      }
+      p {
+        margin: 1em 0;
+      }
+      ul,
+      ol {
+        margin-left: 2em;
+      }
+      body:has(#notes:not(:empty)) {
+        padding-right: 1em;
+      }
+      @media (max-width: 70ch) {
+        body:has(#notes:not(:empty)) {
+          padding-right: 0em;
+          & > svg {
+            display: none;
+          }
+          #sidebar {
+            max-width: unset;
+          }
+        }
+      }
+      #controls {
+        font-size: 2em;
+        padding: 1rem;
+        border-radius: 14pt;
+        border: 3px solid #94e2d5;
+        display: flex;
+        justify-content: space-between;
+        gap: 1em;
+        & div {
+          display: flex;
+          gap: 1em;
+        }
+        & button {
+          border: none;
+          background: transparent;
+          cursor: pointer;
+        }
+        & svg {
+          width: 2rem;
+          height: 2rem;
+          display: block;
+          stroke: #cdd6f4;
+        }
+      }
+    </style>
+    <link rel="stylesheet" href="theme.css" />
   </head>
   <body>
-    <header>
-      <a href="https://snlx.net">
-        <img src="logo.svg" alt="logo" />
-      </a>
+    <div id="sidebar">
+      <main id="notes"></main>
+      <div id="controls">
+        <button id="prev">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-arrow-left-icon lucide-arrow-left"
+          >
+            <path d="m12 19-7-7 7-7" />
+            <path d="M19 12H5" />
+          </svg>
+        </button>
 
-      <nav>
-        <a href="https://snlx.net">Home</a>
-        <h1>YapTyp</h1>
-      </nav>
-    </header>
+        <span id="timer"></span>
 
-    <iframe
-      src="https://3d.snlx.net/?model=https://yap.snlx.net/yaptyp.glb&scale=0.04"
-      height="300"
-    ></iframe>
-
-    <main>
-      <h2>Writing the document</h2>
-      <p>Not that the package is not actually available yet :)</p>
-      <pre>
-<code class="language-typst">
-#import "@preview/yap:0.1.0": video, notes
-
-#video("example.mp4")
-#notes[Notes enable presentation mode]
-</code>
-      </pre>
-      <a href="/doc.pdf">Full documentation</a>
-
-      <h2>Hydrating</h2>
-      <ul>
-        <li>
-          If you're using the <a href="https://typst.app">Typst web app</a>,
-          export as SVG and select the zip file
-        </li>
-        <li>If you're using the local compiler, select the individual SVGs</li>
-      </ul>
-      <label class="file-input">
-        Upload zip / svg
-        <input
-          type="file"
-          multiple
-          id="source-files"
-          accept="image/svg+xml, application/zip, application/x-zip-compressed"
-        />
-      </label>
-    </main>
-
-    <script src="https://unpkg.com/jszip@3.10.1/dist/jszip.min.js"></script>
+        <div>
+          <button id="full">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-fullscreen-icon lucide-fullscreen"
+            >
+              <path d="M3 7V5a2 2 0 0 1 2-2h2" />
+              <path d="M17 3h2a2 2 0 0 1 2 2v2" />
+              <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
+              <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
+              <rect width="10" height="8" x="7" y="8" rx="1" />
+            </svg>
+          </button>
+          <button id="next">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-arrow-right-icon lucide-arrow-right"
+            >
+              <path d="M5 12h14" />
+              <path d="m12 5 7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <script src="runtime.js"></script>
     <script src="builder.js"></script>
   </body>
 </html>
