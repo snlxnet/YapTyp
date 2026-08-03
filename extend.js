@@ -123,16 +123,6 @@ function download() {
 async function observeDirectory() {
   const root = await window.showDirectoryPicker();
 
-  const observer = new FileSystemObserver(([event]) => {
-    if (event.type !== "modified") {
-      return
-    }
-    console.log("reload")
-  });
-  await observer.observe(root);
-
-  // return await openFile(root, "extend.js")
-
   const prefixes = ["slide", "page"]
   for await (let entry of root.values()) {
     if (entry.name.startsWith("yap") || entry.name.startsWith("preview-banner")) continue // DUCT TAPE WARNING
@@ -142,14 +132,28 @@ async function observeDirectory() {
     }
   }
 
-  const oldSlides = document.querySelectorAll("body>svg");
-  oldSlides.forEach(slide => slide.remove())
+  const observer = new FileSystemObserver(([event]) => {
+    if (event.type !== "modified") {
+      return
+    }
+    showCurrent()
+  });
+  await observer.observe(root);
 
-  document.body.innerHTML += await readSvgDirentry(root, prefixes)
+  // await openFile(root, "extend.js")
 
-  createVideos(document.body);
-  createImages(document.body);
-  reload()
+  showCurrent()
+
+  async function showCurrent() {
+    const oldSlides = document.querySelectorAll("body>svg");
+    oldSlides.forEach(slide => slide.remove())
+
+    document.body.innerHTML += await readSvgDirentry(root, prefixes)
+
+    createVideos(document.body);
+    createImages(document.body);
+    reload()
+  }
 }
 
 async function readSvgDirentry(root, prefixes) {
