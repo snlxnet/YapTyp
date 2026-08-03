@@ -79,8 +79,6 @@ async function onFileSelect(event) {
     document.body.innerHTML += await readSvgArray(files);
   }
 
-  createVideos(document.body);
-  createImages(document.body);
   reload()
 };
 
@@ -150,10 +148,22 @@ async function observeDirectory() {
 
     document.body.innerHTML += await readSvgDirentry(root, prefixes)
 
-    createVideos(document.body);
-    createImages(document.body);
     reload()
+    fixDirentryMedia(root)
   }
+}
+
+async function fixDirentryMedia(root) {
+  Array.from(document.querySelectorAll("video"))
+    .filter(video => !video.getAttribute("src").includes("://"))
+    .map(async (video) => {
+      console.log("vid")
+      const file = await openFile(root, video.getAttribute("src"))
+      console.log('fopen')
+      const url = URL.createObjectURL(file)
+      console.log({url})
+      video.setAttribute("src", url)
+    })
 }
 
 async function readSvgDirentry(root, prefixes) {
@@ -178,7 +188,8 @@ async function readSvgDirentry(root, prefixes) {
 }
 
 async function openFile(root, path) {
-  const parts = path.split("/")
+  const parts = path.replaceAll("./", "").split("/").filter(Boolean)
+  console.log(parts)
 
   if (parts.length === 0) {
     return
