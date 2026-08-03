@@ -28,14 +28,14 @@
       grid(
         columns: (1fr, auto),
         align: horizon,
-        image(
-          "logo.svg",
-          height: 1.2em,
+        link(
+          "https://snlx.net",
+          image(
+            "logo.svg",
+            height: 1.2em,
+          ),
         ),
-        text(
-          fill: white,
-          [*Yap*],
-        ),
+        [project *yap* | #text(fill: teal)[2026]]
       ),
     )
   }),
