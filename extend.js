@@ -102,7 +102,7 @@ async function readZip(file) {
 
 function download() {
   document.getElementById("save").style.display = "none"
-  reload()
+  createTimer()
   firstSlide()
 
   const html = Array.from(document.children).map(child => child.innerHTML).join("\n")
@@ -157,12 +157,16 @@ async function fixDirentryMedia(root) {
   Array.from(document.querySelectorAll("video"))
     .filter(video => !video.getAttribute("src").includes("://"))
     .map(async (video) => {
-      console.log("vid")
       const file = await openFile(root, video.getAttribute("src"))
-      console.log('fopen')
       const url = URL.createObjectURL(file)
-      console.log({url})
       video.setAttribute("src", url)
+    })
+
+  Array.from(document.querySelectorAll("img"))
+    .map(async (img) => {
+      const file = await openFile(root, img.getAttribute("src"))
+      const url = URL.createObjectURL(file)
+      img.setAttribute("src", url)
     })
 }
 
