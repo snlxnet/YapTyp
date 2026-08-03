@@ -1,3 +1,5 @@
+const SLIDE_WORD = navigator.language.includes("ru") ? "Слайд" : "Slide"
+
 let slides = []
 let currentSlide = 0;
 let lastIntervalId = 0;
@@ -152,7 +154,7 @@ function wrapNotes(note, slideIdx) {
   const container = document.createElement("div");
   container.innerHTML = note || "<p></p>";
   const heading = document.createElement("h2");
-  heading.textContent = "Slide " + slideIdx;
+  heading.textContent = `${SLIDE_WORD} ${slideIdx+1}`;
   heading.id = "notes" + slideIdx;
   heading.classList.add("note-title");
   container.prepend(heading);
