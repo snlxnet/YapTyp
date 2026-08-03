@@ -122,7 +122,9 @@ function showSlide(idx, quiet = false) {
     .forEach((el) => el.classList.remove("highlight"));
   document.getElementById("notes" + idx)?.classList.add("highlight");
   console.log("notes" + idx, document.getElementById("notes" + idx));
+
   currentSlide = idx;
+
   slides.forEach((slide, currentIdx) => {
     let videos = Array.from(slide.querySelectorAll("video"));
     if (currentIdx !== idx) {
@@ -225,3 +227,18 @@ function createImages(root) {
       parent.innerHTML = `<foreignObject width="${width}" height="${height}"><img src="${url}" style="object-fit: ${fit}" /></foreignObject>`;
     });
 }
+
+function getTypstLabel(label) {
+  const anchor = document.querySelector(`[data-typst-label="${label}"]`)
+  const existing = anchor.querySelector("foreignObject")
+
+  if (existing) {
+    return existing
+  }
+
+  const foreign = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject")
+  anchor.appendChild(foreign)
+
+  return foreign
+}
+

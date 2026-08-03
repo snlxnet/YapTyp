@@ -1,3 +1,4 @@
+let extendScriptTimeoutId = -1
 load()
 
 async function load() {
@@ -11,23 +12,6 @@ async function load() {
     idx++
   }
 
-  try {
-    reload()
-    extend()
-  } catch(e) {
-    console.error(e)
-  }
-
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "d" || event.key === "Enter") {
-      download()
-    }
-  })
-
-  document.querySelector('script[src="builder.js"]').remove()
-}
-
-function extend() {
   const input = document.createElement("input");
   input.type = "file"
   input.setAttribute("multiple", "true")
@@ -43,33 +27,23 @@ function extend() {
   dirButton.style.opacity = "0";
   getTypstLabel("dir").appendChild(dirButton)
 
-  const bookButton = document.createElement("button")
-  bookButton.style.opacity = "0";
-  getTypstLabel("book").appendChild(bookButton)
-
   input.addEventListener("input", onFileSelect)
   dirButton.addEventListener("click", observeDirectory)
-  bookButton.addEventListener("click", toggleBook)
 
   reload()
-}
 
-function getTypstLabel(label) {
-  const anchor = document.querySelector(`[data-typst-label="${label}"]`)
-  const existing = anchor.querySelector("foreignObject")
+  const extendScript = document.createElement("script")
+  extendScript.id = "extend"
+  extendScript.src = "extend.js"
+  document.body.appendChild(extendScript)
 
-  if (existing) {
-    return existing
-  }
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "d" || event.key === "Enter") {
+      download()
+    }
+  })
 
-  const foreign = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject")
-  anchor.appendChild(foreign)
-
-  return foreign
-}
-
-function toggleBook() {
-  document.body.classList.toggle("book-mode")
+  document.querySelector('script[src="builder.js"]').remove()
 }
 
 async function onFileSelect(event) {
@@ -146,8 +120,6 @@ async function observeDirectory() {
   });
   await observer.observe(root);
 
-  // await openFile(root, "extend.js")
-
   showCurrent()
 
   async function showCurrent() {
@@ -156,7 +128,15 @@ async function observeDirectory() {
 
     document.body.innerHTML += await readSvgDirentry(root, prefixes)
 
-    reload()
+    clearTimeout(extendScriptTimeoutId)
+    extendScriptTimeoutId = setTimeout(async () => {
+      document.getElementById("extend")?.remove()
+      const extend = document.createElement("script")
+      extend.id = "extend"
+      extend.innerHTML = await openFile(root, "extend.js").then((f) => f.text(), () => "")
+      document.body.appendChild(extend)
+      reload()
+    }, 100)
     fixDirentryMedia(root)
   }
 }
@@ -221,13 +201,13 @@ async function readSvgDirentry(root, prefixes) {
 
 async function openFile(root, path) {
   const parts = path.replaceAll("./", "").split("/").filter(Boolean)
-  console.log(parts)
 
   if (parts.length === 0) {
     return
   } else if (parts.length === 1) {
-    return root.getFileHandle(path).then(handle => handle.getFile())
+    return root.getFileHandle(parts[0]).then(handle => handle.getFile())
   }
+  console.log('dir', path)
 
   const lastDir = await parts.slice(0, -1).reduce(async (acc, curr) => await acc.getDirectoryHandle(curr), root)
   return lastDir.getFileHandle(parts.at(-1)).then(handle => handle.getFile())

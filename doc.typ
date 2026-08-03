@@ -1,6 +1,7 @@
 #import "@preview/tidy:0.4.3"
 #import "@preview/catppuccin:1.1.0": catppuccin, flavors, show-module
-#import "yap.typ": notes, video
+#import "yap.typ": notes, video, use-local
+#use-local()
 
 #let flavor = flavors.mocha
 #let teal = flavor.colors.teal.rgb
@@ -41,11 +42,6 @@
 )
 
 /*
-#video(
-  "https://weldlab.github.io/video/omni.mp4",
-  aspect-ratio: "1.3333",
-  height: 70%,
-)
 #notes[
   Slide one speaker notes
 ]
@@ -66,42 +62,116 @@ If you don't know what Typst is,
 #pagebreak()
 */
 
-1. Import & use the library
-   ```typst
-   #import "@preview/yap:0.1.0": video, notes
+#set align(center)
+#text(size: 24pt)[Browser-optimized paged export]\
+#v(2mm)
+With videos and speaker notes
+#v(1cm)
 
-   #video("example.mp4")
-   #notes[Notes enable presentation mode]
-   ```
-
-2. Export
-   - #link("https://typst.app")[Typst web app] ->
-     export SVG -> select the zip
-   - Typst compiler -> compile to SVG -> select folder
-
-#let button(message) = box(
+#let button(color, message) = box(
   baseline: 0.6em,
   inset: 0.6em,
-  stroke: 1mm + teal,
+  stroke: 1mm + color,
   fill: rgb("12345600"),
   radius: 0.6em,
-  text(fill: teal, message),
+  text(fill: color, message),
 )
 
-3. Select #button[ZIP / SVGs (static)]<zip> or #button[Folder with SVGs (auto-reloads)]<dir>
+#button(white)[(Zipped) SVGs]<zip>
+#h(2mm)
+#button(teal)[Folder with SVGs]<dir>\
 
 #notes[
-  Add videos and interactive speaker notes to your Typst documents
-  in 3 steps.
+  Press one of the buttons on the right.
 
-  If you're using the local compiler and anything but Firefox or Safari,
-  the preview will auto-update if the SVGs change.
-  Press the download button when you want to export the presentation.
+  *Folders* are for the local compiler & support *auto-reload*.
 
-  To generate a book, don't use speaker notes.
+  When your presentation is done, press *enter* to *save*
+  it as a standalone file.
 ]
 
 #pagebreak()
+#set page(columns: 2)
+
+```typst
+#import "@preview/yap:0.1.0":*
+
+// tell the compiler it has local video files
+#use-local()
+
+#figure(
+  video("omni.mp4"),
+  caption: "Example video",
+)
+
+#notes[Quick start]
+```
+
+#figure(
+  video("omni.mp4"),
+  caption: "Example video",
+)
+
+#notes[Quick start]
+
+#pagebreak()
+#set page(columns: 1)
+
+#text(size: 24pt)[Slide mode & Book mode]
+
+#button(white)[Toggle book mode]<book>
+
+#notes[
+  If your doc has `#notes`, it is considered a presentation.
+  Presentations have this sidebar with the fullscreen button.
+
+  Save the presentation (with enter), open a tab with the saved file
+  on the primary screen and another one on the projector,
+  fullscreen the projector one. They will sync.
+
+  If you don't have notes, the doc will be rendered
+  as a list of pages. If your screen is wide enough,
+  it will fit 2 or 3 pages at once, then you need to scroll.
+]
+
+#pagebreak()
+#set align(left)
+#notes[JS API]
+
+Yap's functionality can be easily extended:
+#stack(
+  dir: ltr,
+  [
+    ```typst
+    // your-file.typ
+    #set box(width: 2cm, height: 1cm)
+
+    #box(fill: teal)<say-hi>
+
+    #box(stroke: teal)<input>
+    ```
+    #v(5mm)
+    ```js
+    // extend.js
+    getTypstLabel("say-hi").onclick = () => alert("hi")
+
+    const input = document.createElement("input")
+    input.type = "color"
+    getTypstLabel("input").appendChild(input)
+    ```
+  ],
+  h(5mm),
+  [
+    #set box(width: 2cm, height: 1cm)
+
+    #box(fill: teal)<say-hi>
+
+    #box(stroke: teal)<input>
+  ]
+)
+
+#pagebreak()
+#notes[Typst API]
 
 #let docs = tidy.parse-module(read("yap.typ"))
 #set align(top+left)
