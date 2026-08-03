@@ -140,7 +140,11 @@ function showSlide(idx, quiet = false) {
         foreign.setAttribute("width", size.width);
         foreign.setAttribute("height", size.height);
       })
-      videos.forEach((video) => video.play());
+      try {
+        videos.forEach((video) => video.play());
+      } catch (e) {
+        console.error(e)
+      }
     }
   });
   if (!quiet) {

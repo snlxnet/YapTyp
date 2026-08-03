@@ -1,4 +1,6 @@
 let extendScriptTimeoutId = -1
+let reloadDirentry = async () => {}
+let updateSlidesToUseDirentry = async () => {}
 load()
 
 async function load() {
@@ -85,9 +87,10 @@ async function readZip(file) {
 }
 
 async function download() {
-  breakDirentryMedia()
-  createTimer()
-  firstSlide()
+  await reloadDirentry()
+  reload()
+  showSlide(0)
+  document.body.innerHTML += '<script id="extend" src="extend.js"></script>'
 
   const runtime = await fetch("runtime.js").then(res => res.text())
   const html = Array.from(document.children).map(child => child.innerHTML).join("\n").replace(`<script src="runtime.js"></script>`, `<script>${runtime}</script>`)
@@ -100,7 +103,8 @@ async function download() {
   element.setAttribute("download", "player.html");
   element.click();
 
-  unbreakDirentryMedia()
+  updateSlidesToUseDirentry()
+  reload()
 }
 
 async function observeDirectory() {
@@ -115,19 +119,14 @@ async function observeDirectory() {
     }
   }
 
-  const observer = new FileSystemObserver(([event]) => {
-    showCurrent()
-  });
-  await observer.observe(root);
-
-  showCurrent()
-
-  async function showCurrent() {
+  reloadDirentry = async () => {
     const oldSlides = document.querySelectorAll("body>svg");
     oldSlides.forEach(slide => slide.remove())
 
     document.body.innerHTML += await readSvgDirentry(root, prefixes)
-
+    document.getElementById("extend")?.remove()
+  }
+  updateSlidesToUseDirentry = () => {
     clearTimeout(extendScriptTimeoutId)
     extendScriptTimeoutId = setTimeout(async () => {
       document.getElementById("extend")?.remove()
@@ -136,9 +135,18 @@ async function observeDirectory() {
       extend.innerHTML = await openFile(root, "extend.js").then((f) => f.text(), () => "")
       document.body.appendChild(extend)
       reload()
+      fixDirentryMedia(root)
     }, 100)
-    fixDirentryMedia(root)
   }
+
+  const observer = new FileSystemObserver(async ([event]) => {
+    await reloadDirentry()
+    await updateSlidesToUseDirentry()
+  });
+  await observer.observe(root);
+
+  await reloadDirentry()
+  await updateSlidesToUseDirentry()
 }
 
 async function fixDirentryMedia(root) {
@@ -149,7 +157,6 @@ async function fixDirentryMedia(root) {
       const file = await openFile(root, src)
       const url = URL.createObjectURL(file)
       video.setAttribute("src", url)
-      video.dataset.originalPath = src
     })
 
   Array.from(document.querySelectorAll("img"))
@@ -160,22 +167,6 @@ async function fixDirentryMedia(root) {
       img.setAttribute("src", url)
       img.dataset.originalPath = src
     })
-}
-
-async function breakDirentryMedia() {
-  document.querySelectorAll("video, img").forEach(media => {
-    if (!media.dataset.originalPath) return
-    media.dataset.blob = media.src
-    media.src = media.dataset.originalPath
-  })
-}
-
-async function unbreakDirentryMedia() {
-  document.querySelectorAll("video, img").forEach(media => {
-    if (!media.dataset.blob) return
-    media.src = media.dataset.blob
-    delete media.dataset.blob
-  })
 }
 
 async function readSvgDirentry(root, prefixes) {
