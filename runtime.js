@@ -3,10 +3,12 @@ let currentSlide = 0;
 let lastIntervalId = 0;
 
 const channel = new BroadcastChannel("control");
-channel.addEventListener("message", ({ data: idx }) =>
-  showSlide(idx, true),
-);
-reload()
+window.addEventListener("load", () => {
+  reload()
+  channel.addEventListener("message", ({ data: idx }) =>
+    showSlide(idx, true),
+  );
+})
 
 //////////////////////////////////////////
 
@@ -14,8 +16,12 @@ function reload() {
   slides = document.querySelectorAll("body>svg");
 
   updateDisplayMode()
-  createVideos(document.body);
-  createImages(document.body);
+  try {
+    createVideos(document.body);
+    createImages(document.body);
+  } catch (e) {
+    console.log("Images and videos appear to alerady be in place")
+  }
   showSlide(currentSlide)
 }
 
@@ -58,7 +64,7 @@ document.addEventListener("keydown", (event) => {
     f: fullscreen,
   };
 
-  actions[event.key]();
+  actions[event.key]?.();
 });
 
 function fullscreen() {

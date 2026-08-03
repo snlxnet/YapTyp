@@ -18,7 +18,11 @@ async function load() {
     console.error(e)
   }
 
-  document.getElementById("save").onclick = download
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "d" || event.key === "Enter") {
+      download()
+    }
+  })
 }
 
 function extend() {
@@ -100,12 +104,13 @@ async function readZip(file) {
   return body;
 }
 
-function download() {
-  document.getElementById("save").style.display = "none"
+async function download() {
+  breakDirentryMedia()
   createTimer()
   firstSlide()
 
-  const html = Array.from(document.children).map(child => child.innerHTML).join("\n")
+  const runtime = await fetch("runtime.js").then(res => res.text())
+  const html = Array.from(document.children).map(child => child.innerHTML).join("\n").replace(`<script src="runtime.js"></script>`, `<script>${runtime}</script>`)
 
   const element = document.createElement("a");
   element.setAttribute(
@@ -115,7 +120,7 @@ function download() {
   element.setAttribute("download", "player.html");
   element.click();
 
-  document.getElementById("save").style.display = null
+  unbreakDirentryMedia()
 }
 
 async function observeDirectory() {
@@ -157,17 +162,37 @@ async function fixDirentryMedia(root) {
   Array.from(document.querySelectorAll("video"))
     .filter(video => !video.getAttribute("src").includes("://"))
     .map(async (video) => {
-      const file = await openFile(root, video.getAttribute("src"))
+      const src = video.getAttribute("src")
+      const file = await openFile(root, src)
       const url = URL.createObjectURL(file)
       video.setAttribute("src", url)
+      video.dataset.originalPath = src
     })
 
   Array.from(document.querySelectorAll("img"))
     .map(async (img) => {
+      const src = img.getAttribute("src")
       const file = await openFile(root, img.getAttribute("src"))
       const url = URL.createObjectURL(file)
       img.setAttribute("src", url)
+      img.dataset.originalPath = src
     })
+}
+
+async function breakDirentryMedia() {
+  document.querySelectorAll("video, img").forEach(media => {
+    if (!media.dataset.originalPath) return
+    media.dataset.blob = media.src
+    media.src = media.dataset.originalPath
+  })
+}
+
+async function unbreakDirentryMedia() {
+  document.querySelectorAll("video, img").forEach(media => {
+    if (!media.dataset.blob) return
+    media.src = media.dataset.blob
+    delete media.dataset.blob
+  })
 }
 
 async function readSvgDirentry(root, prefixes) {
