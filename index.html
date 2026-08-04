@@ -17,7 +17,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        min-height: 100lvh;
+        min-height: 100svh;
         background: #1e1e2e;
       }
       body::backdrop {
@@ -30,18 +30,18 @@
       svg {
         width: 100%;
         height: unset;
-        max-height: 100lvh;
+        max-height: 100svh;
         display: none;
       }
       body.book-mode svg {
-        height: 100lvh;
+        height: 100svh;
         width: unset;
         display: block;
       }
       @media (min-aspect-ratio: 16/9) {
         svg {
           width: unset;
-          height: 100lvh;
+          height: 100svh;
         }
       }
       svg.visible {
@@ -56,7 +56,7 @@
       #sidebar {
         box-sizing: border-box;
         grid-template-rows: 1fr auto;
-        height: 100lvh;
+        height: 100svh;
         max-width: 50ch;
         font: 16px monospace;
         color: #cdd6f4;
